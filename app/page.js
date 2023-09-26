@@ -111,3 +111,10 @@ export default function Home() {
     </main>
   )
 }
+export function getStaticProps() {
+  return {
+    props: {
+      data: 'z'
+    }
+  }
+}
