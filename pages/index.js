@@ -6,20 +6,20 @@ import { getValue, setValue } from '@/config/firebase'
 export default function Home({data, main}) {
   console.log(data)
   return (
-    <main className="flex flex-col items-center justify-start">
+    <main className="flex flex-col items-center justify-start h-screen">
       <div className="py-4 pt-8">
-        {/* <h1 className="text-center text-4xl">{data[data.length-1].temperature}°C</h1> */}
-        {/* <span>{parseInt((new Date().getTime() - parseInt(data[data.length-1].timestamp))/1000/60)} {parseInt((new Date().getTime() - parseInt(data[data.length-1].timestamp))/1000/60) == 1 ? " minute" : " minutes"} ago</span> */}
+        <h1 className="text-center text-4xl">{data[data.length-1].temperature}°C</h1>
+        <span>{parseInt((new Date().getTime() - parseInt(data[data.length-1].timestamp))/1000/60)} {parseInt((new Date().getTime() - parseInt(data[data.length-1].timestamp))/1000/60) == 1 ? " minute" : " minutes"} ago ({format(new Date(data[data.length-1].timestamp), "MMMM do yyyy HH:mm")})</span>
       </div>
-      <div className="h-full w-full flex justify-center">
+      <div className="h-4/5 w-11/12 flex justify-center">
         {data && <Graph dataset={data} />}
       </div>
       <div>
-        <button onClick={() => setValue('main', 'private', {last_porn: new Date().getTime()})}>I watched Porn ({})</button>
+        {/* <button onClick={() => setValue('main', 'private', {last_porn: new Date().getTime()})}>I watched Porn ({})</button>
         <button onClick={() => setValue('main', 'private', {last_smoke: new Date().getTime()})}>I smoked</button>
         <button onClick={() => setValue('main', 'private', {last_weed: new Date().getTime()})}>I smoked weed</button>
         <button onClick={() => setValue('main', 'private', {last_masturbation: new Date().getTime()})}>I masturbated</button>
-        <button onClick={() => setValue('main', 'private', {last_ejaculation: new Date().getTime()})}>I ejaculated</button>
+        <button onClick={() => setValue('main', 'private', {last_ejaculation: new Date().getTime()})}>I ejaculated</button> */}
       </div>
     </main>
   )

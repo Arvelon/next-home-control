@@ -29,9 +29,14 @@ export default function Graph({ dataset }) {
     Tooltip,
     Legend
   );
+  console.log(dataset);
 
+  const temparr = dataset.map(entry => parseFloat(entry.temperature))
+  const min = Math.min(...temparr)
+  const max = Math.max(...temparr)
   const options = {
     responsive: true,
+    maintainAspectRatio: false,
     scales: {
       // adapters: {
       //   date: {
@@ -44,17 +49,19 @@ export default function Graph({ dataset }) {
           // Luxon format string
           tooltipFormat: "DD T",
         },
-        title: {
-          display: true,
-          text: "Time",
-        },
+        // title: {
+        //   display: true,
+        //   text: "Time",
+        // },
       },
-      // y: {
-      //   title: {
-      //     display: true,
-      //     text: "value",
-      //   },
-      // },
+      y: {
+        // title: {
+        //   display: true,
+        //   text: "value",
+        // },
+        min: min-0.1,
+        max: max+0.1
+      },
     },
   };
   //
@@ -76,11 +83,11 @@ export default function Graph({ dataset }) {
         data: temps,
         fill: true,
         borderWidth: 1.5,
-        borderColor: "rgba(255, 99, 132, 0.5)",
-        backgroundColor: "rgba(255, 99, 132, 0.5)",
+        borderColor: "rgba(255, 99, 132, 1)",
+        backgroundColor: "rgba(255, 99, 132, 0.3)",
       },
     ],
   };
 
-  return <Bar options={options} data={data} />;
+  return <Line options={options} data={data} />;
 }

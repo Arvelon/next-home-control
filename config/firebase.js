@@ -1,6 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getFirestore, setDoc } from "firebase/firestore";
+import { getFirestore, query, setDoc, limit } from "firebase/firestore";
 import {
   doc,
   addDoc,
@@ -31,7 +31,7 @@ export const addValue = async (list, value) => {
   // if (value.temperature > main.temperature - 6) {
     console.log(list, value)
     await setDoc(doc(db, list, value.timestamp.toString()), value);
-    setValue("main", "test", value.temperature);
+    setValue("main", "test", {temperature: value.temperature});
   // }
 };
 
@@ -57,7 +57,8 @@ export const getValue = async (collection, key) => {
 };
 
 export const getAll = async (list) => {
-  const querySnapshot = await getDocs(collection(db, list));
+  const q = query(collection(db, list),  limit(100));
+  const querySnapshot = await getDocs(q);
   const data = [];
   querySnapshot.forEach((doc) => {
     // doc.data() is never undefined for query doc snapshots
