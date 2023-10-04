@@ -1,6 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
+import { getFirestore, setDoc } from "firebase/firestore";
 import {
   doc,
   addDoc,
@@ -28,10 +28,11 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 export const addValue = async (list, value) => {
-  if (value.temperature > main.temperature - 6) {
-    await setDoc(doc(db, list, value.timestamp), value);
+  // if (value.temperature > main.temperature - 6) {
+    console.log(list, value)
+    await setDoc(doc(db, list, value.timestamp.toString()), value);
     setValue("main", "test", value.temperature);
-  }
+  // }
 };
 
 export const setValue = async (collection, key, value) => {

@@ -8,11 +8,11 @@ export default function Home({data, main}) {
   return (
     <main className="flex flex-col items-center justify-start">
       <div className="py-4 pt-8">
-        <h1 className="text-center text-4xl">{data[data.length-1].temperature}°C</h1>
-        <span>{parseInt((new Date().getTime() - parseInt(data[data.length-1].timestamp))/1000/60)} {parseInt((new Date().getTime() - parseInt(data[data.length-1].timestamp))/1000/60) == 1 ? " minute" : " minutes"} ago</span>
+        {/* <h1 className="text-center text-4xl">{data[data.length-1].temperature}°C</h1> */}
+        {/* <span>{parseInt((new Date().getTime() - parseInt(data[data.length-1].timestamp))/1000/60)} {parseInt((new Date().getTime() - parseInt(data[data.length-1].timestamp))/1000/60) == 1 ? " minute" : " minutes"} ago</span> */}
       </div>
       <div className="h-full w-full flex justify-center">
-        <Graph dataset={data} />
+        {data && <Graph dataset={data} />}
       </div>
       <div>
         <button onClick={() => setValue('main', 'private', {last_porn: new Date().getTime()})}>I watched Porn ({})</button>
