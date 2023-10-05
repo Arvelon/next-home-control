@@ -17,8 +17,8 @@ import "chartjs-adapter-date-fns";
 import {be} from 'date-fns/locale';
 
 
-export default function Graph({ dataset }) {
-  console.log(dataset);
+export default function Graph({ dataset, valueName, colorRgb }) {
+  // console.log(dataset);
   ChartJS.register(
     CategoryScale,
     TimeScale,
@@ -29,9 +29,9 @@ export default function Graph({ dataset }) {
     Tooltip,
     Legend
   );
-  console.log(dataset);
+  // console.log(dataset);
 
-  const temparr = dataset.map(entry => parseFloat(entry.temperature))
+  const temparr = dataset.map(entry => parseFloat(entry[valueName]))
   const min = Math.min(...temparr)
   const max = Math.max(...temparr)
   const options = {
@@ -65,13 +65,13 @@ export default function Graph({ dataset }) {
     },
   };
   //
-  console.log(dataset);
+  // console.log(dataset);
 
   const labels = dataset.map((i, key) => new Date(i.timestamp));
-  console.log(labels);
+  // console.log(labels);
 
-  const temps = dataset.map((i, key) => parseFloat(i.temperature));
-  console.log(temps);
+  const temps = dataset.map((i, key) => parseFloat(i[valueName]));
+  // console.log(temps);
 
   // const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
 
@@ -79,12 +79,12 @@ export default function Graph({ dataset }) {
     labels,
     datasets: [
       {
-        label: "Temperature (°C)",
+        label: valueName.charAt(0).toUpperCase() + valueName.slice(1),
         data: temps,
         fill: true,
         borderWidth: 1.5,
-        borderColor: "rgba(255, 99, 132, 1)",
-        backgroundColor: "rgba(255, 99, 132, 0.3)",
+        borderColor: `rgba(${colorRgb || "255, 99, 132"}, 1)`,
+        backgroundColor: `rgba(${colorRgb || "255, 99, 132"}, 0.3)`,
       },
     ],
   };

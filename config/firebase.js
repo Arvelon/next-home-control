@@ -69,5 +69,6 @@ export const getAll = async (list) => {
   data.sort((a, b) => {
     return a.timestamp - b.timestamp;
   });
+  console.log(data);
   return data;
 };
