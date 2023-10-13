@@ -14,11 +14,21 @@ import Chart from "chart.js/auto";
 import { Bar, Line } from "react-chartjs-2";
 import { format } from "date-fns";
 import "chartjs-adapter-date-fns";
-import {be} from 'date-fns/locale';
+import { be } from "date-fns/locale";
 
+export default function Graph({
+  dataset,
+  valueName,
+  colorRgb,
+  mode,
+  scale,
+  disabled,
+  dayMode
+}) {
+  console.log(scale)
+  if (disabled) return "Data Source Offline";
 
-export default function Graph({ dataset, valueName, colorRgb }) {
-  // console.log(dataset);
+  console.log(dataset);
   ChartJS.register(
     CategoryScale,
     TimeScale,
@@ -31,9 +41,12 @@ export default function Graph({ dataset, valueName, colorRgb }) {
   );
   // console.log(dataset);
 
-  const temparr = dataset.map(entry => parseFloat(entry[valueName]))
-  const min = Math.min(...temparr)
-  const max = Math.max(...temparr)
+  const temparr =
+    scale == "date"
+      ? Object.values(dataset)
+      : dataset.map((entry) => parseFloat(entry[valueName]));
+  const min = Math.min(...temparr);
+  const max = Math.max(...temparr);
   const options = {
     responsive: true,
     maintainAspectRatio: false,
@@ -43,11 +56,13 @@ export default function Graph({ dataset, valueName, colorRgb }) {
       //     locale: be,
       //   },
       // },
+      
       x: {
         type: "time",
         time: {
           // Luxon format string
-          tooltipFormat: "DD T",
+          unit: dayMode ? "day" : false,
+          tooltipFormat: "dd/MM/yyyy HH:mm:ss",
         },
         // title: {
         //   display: true,
@@ -59,18 +74,24 @@ export default function Graph({ dataset, valueName, colorRgb }) {
         //   display: true,
         //   text: "value",
         // },
-        min: min-0.1,
-        max: max+0.1
+        min: min - 0.1,
+        max: max + 0.1,
       },
     },
   };
   //
   // console.log(dataset);
 
-  const labels = dataset.map((i, key) => new Date(i.timestamp));
+  const labels =
+    scale == "date"
+      ? Object.keys(dataset).map((ts) => new Date(ts))
+      : dataset.map((i, key) => new Date(i.timestamp));
   // console.log(labels);
 
-  const temps = dataset.map((i, key) => parseFloat(i[valueName]));
+  const temps =
+    scale == "date"
+      ? Object.values(dataset)
+      : dataset.map((i, key) => parseFloat(i[valueName]));
   // console.log(temps);
 
   // const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
@@ -89,5 +110,13 @@ export default function Graph({ dataset, valueName, colorRgb }) {
     ],
   };
 
-  return <Line options={options} data={data} />;
+  return (
+    <div className="h-4/5 w-11/12 flex justify-center">
+      {mode === "line" ? (
+        <Line options={options} data={data} />
+      ) : (
+        <Bar options={options} data={data} />
+      )}
+    </div>
+  );
 }

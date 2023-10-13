@@ -1,6 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getFirestore, query, setDoc, limit } from "firebase/firestore";
+import { getFirestore, query, setDoc, limit, orderBy } from "firebase/firestore";
 import {
   doc,
   addDoc,
@@ -29,9 +29,9 @@ const db = getFirestore(app);
 
 export const addValue = async (list, value) => {
   // if (value.temperature > main.temperature - 6) {
-    console.log(list, value)
+    // console.log(list, value)
     await setDoc(doc(db, list, value.timestamp.toString()), value);
-    setValue("main", "test", {temperature: value.temperature});
+    // setValue("main", "test", {temperature: value.temperature});
   // }
 };
 
@@ -47,17 +47,17 @@ export const getValue = async (collection, key) => {
   const docSnap = await getDoc(docRef);
 
   if (docSnap.exists()) {
-    console.log("Document data:", docSnap.data());
+    // console.log("Document data:", docSnap.data());
     return docSnap.data();
   } else {
     // docSnap.data() will be undefined in this case
-    console.log("No such document!");
+    // console.log("No such document!");
     return "nope";
   }
 };
 
-export const getAll = async (list) => {
-  const q = query(collection(db, list),  limit(100));
+export const getAll = async (list, size) => {
+  const q = query(collection(db, list), orderBy("timestamp", "desc"), limit(size || 75));
   const querySnapshot = await getDocs(q);
   const data = [];
   querySnapshot.forEach((doc) => {
@@ -69,6 +69,6 @@ export const getAll = async (list) => {
   data.sort((a, b) => {
     return a.timestamp - b.timestamp;
   });
-  console.log(data);
+  // console.log(data);
   return data;
 };

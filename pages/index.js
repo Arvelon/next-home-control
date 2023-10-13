@@ -1,139 +1,188 @@
 import Image from "next/image";
 import Graph from "../components/chart";
-import { format } from "date-fns";
-import { getValue, setValue } from "@/config/firebase";
-import { useState } from "react";
+import { format, formatDistance } from "date-fns";
+import { addValue, getValue, setValue } from "@/config/firebase";
+import { useEffect, useState } from "react";
 import { AiFillCloseCircle } from "react-icons/ai";
+import CardChart from "@/components/card-chart";
+import { ta } from "date-fns/locale";
 
-export default function Home({ temperature, humidity, main }) {
+export default function Home({ temperature, humidity, smoke, ejaculation, main }) {
   const [activeCard, setActiveCard] = useState(false);
+  const [gridState, setGridState] = useState("grid-cols-1 grid-rows-2");
+  const [mode, setMode] = useState("line");
+  const [tActive, setTActive] = useState(true);
+  const [hActive, setHActive] = useState(true);
+  const [jActive, setJActive] = useState(false);
+  const [eActive, setEActive] = useState(false);
 
   const focusHandler = (card, action, e) => {
     // console.log(card, action);
-    console.log(e)
-    console.log(e.target.id)
-    setActiveCard(e.target.id === "close" || e.target.parentNode.id === "close" ? false : card);
+    // console.log(e);
+    // console.log(e.target.id);
+    setActiveCard(
+      e.target.id === "close" || e.target.parentNode.id === "close"
+        ? false
+        : card
+    );
   };
+  // setTimeout(() => window.location.reload(true), 300000)
+
+  const setGrid = async (direction, increase) => {
+    const config = await getValue("main", "config");
+    console.log(config);
+
+    if (increase) {
+      config[direction] += 1;
+    } else {
+      config[direction] -= 1;
+    }
+    // console.log("r", config);
+    const gridString = "grid-rows-" + config.rows + " grid-cols-" + config.cols;
+    setGridState(gridString);
+    setValue("main", "config", config);
+    // console.log(gridString);
+  };
+  // setGrid('cols', false)
+
+  // useEffect(() => {
+  //   const viewSettings = localStorage.getItem('viewSettings');
+  //   const settings = viewSettings ? JSON.parse(viewSettings) : false;
+  //   if(settings) {
+
+  //   }
+  // })
 
   return (
-    <main className="flex flex-col md:flex-row h-screen">
-      <div
-        id="temperature"
-        className={`z-10 flex flex-col ${
-          activeCard === "temperature" ? "w-full h-full" : "w-full md:w-1/2 h-full md:h-1/2"
-        } items-center bg-white rounded-xl m-1 pb-5`}
-        onClick={(e) => focusHandler("temperature", "focus", e)}
-      >
-        {activeCard == "temperature" && (
-          <div className="flex justify-end w-full">
-            <AiFillCloseCircle
-            id="close"
-            className="text-3xl text-gray-700 opacity-50 mt-1 mr-1"
-          />
-          </div>
-        )}
-        <div className="py-4 pt-8">
-          <h1 className="text-center text-4xl">
-            {temperature[temperature.length - 1].temperature}°C
-          </h1>
-          <span>
-            {parseInt(
-              (new Date().getTime() -
-                parseInt(temperature[temperature.length - 1].timestamp)) /
-                1000 /
-                60
-            )}{" "}
-            {parseInt(
-              (new Date().getTime() -
-                parseInt(temperature[temperature.length - 1].timestamp)) /
-                1000 /
-                60
-            ) == 1
-              ? " minute"
-              : " minutes"}{" "}
-            ago (
-            {format(
-              new Date(temperature[temperature.length - 1].timestamp),
-              "MMMM do yyyy HH:mm"
-            )}
-            )
-          </span>
-        </div>
-        <div className="h-4/5 w-11/12 flex justify-center">
-          {temperature && (
-            <Graph
-              dataset={temperature}
-              valueName="temperature"
-              colorRgb="255, 99, 132"
-            />
-          )}
-        </div>
-        <div>
-          {/* <button onClick={() => setValue('main', 'private', {last_porn: new Date().getTime()})}>I watched Porn ({})</button>
-        <button onClick={() => setValue('main', 'private', {last_smoke: new Date().getTime()})}>I smoked</button>
-        <button onClick={() => setValue('main', 'private', {last_weed: new Date().getTime()})}>I smoked weed</button>
-        <button onClick={() => setValue('main', 'private', {last_masturbation: new Date().getTime()})}>I masturbated</button>
-        <button onClick={() => setValue('main', 'private', {last_ejaculation: new Date().getTime()})}>I ejaculated</button> */}
-        </div>
-      </div>
+    <main className={`h-screen pb-24`}>
+      <CardChart
+        disabled={!tActive}
+        activeCard={activeCard}
+        data={temperature}
+        color="255, 99, 132"
+        namespace="temperature"
+        mode={mode}
+        focusHandler={focusHandler}
+        unit="°C"
+      />
 
-      <div
-        id="humidity"
-        className={`z-10 flex flex-col ${
-          activeCard === "humidity" ? "w-full h-full" : "w-full md:w-1/2 h-full md:h-1/2"
-        } items-center bg-white rounded-xl m-1 pb-5`}
-        onClick={(e) => focusHandler("humidity", "focus", e)}
-      >
-        {activeCard == "humidity" && (
-          <div className="flex justify-end w-full">
-            <AiFillCloseCircle
-            id="close"
-            className="text-3xl text-gray-700 opacity-50 mt-1 mr-1"
-          />
+      <CardChart
+        disabled={!hActive}
+        activeCard={activeCard}
+        data={humidity}
+        color="51, 153, 255"
+        namespace="humidity"
+        mode={mode}
+        focusHandler={focusHandler}
+        unit="%"
+      />
+
+      <CardChart
+        disabled={!jActive}
+        activeCard={activeCard}
+        data={smoke}
+        color="0, 204, 0"
+        scale="date"
+        namespace="smoke"
+        mode={mode}
+        focusHandler={focusHandler}
+        unit="joints"
+      />
+
+      <CardChart
+        disabled={!eActive}
+        activeCard={activeCard}
+        data={ejaculation}
+        color="0, 204, 0"
+        scale="date"
+        namespace="ejaculation"
+        mode={mode}
+        focusHandler={focusHandler}
+        unit="ejaculations"
+      />
+
+      <div className="fixed flex w-screen bg-white bottom-0 p-4 z-40">
+        <button
+          className="shadow rounded-sm py-1 px-2 mr-4"
+          onClick={() => setMode(mode === "line" ? "bar" : "line")}
+        >
+          {mode === "line" ? "Bar Chart" : "Line Chart"}
+        </button>
+        <button
+          className="shadow rounded-sm py-1 px-2 mr-4"
+          onClick={() =>
+            addValue("smoke_log", { timestamp: new Date().getTime() })
+          }
+        >
+          Log Generic
+        </button>
+        <button
+          className="shadow rounded-sm py-1 px-2 mr-4"
+          onClick={() =>
+            addValue("ejaculation_log", { timestamp: new Date().getTime() })
+          }
+        >
+          Log Enumeration
+        </button>
+        <button
+          className="shadow rounded-sm py-1 px-2 mr-4"
+          onClick={() => setTActive(!tActive)}
+        >
+          Temperature
+        </button>
+        <button
+          className="shadow rounded-sm py-1 px-2 mr-4"
+          onClick={() => setHActive(!hActive)}
+        >
+          Humidity
+        </button>
+        <button
+          className="shadow rounded-sm py-1 px-2 mr-4"
+          onClick={() => setJActive(!jActive)}
+        >
+          {/* Joints */}
+          Generic
+        </button>
+        <button
+          className="shadow rounded-sm py-1 px-2 mr-4"
+          onClick={() => setEActive(!eActive)}
+        >
+          {/* Joints */}
+          Enumeration
+        </button>
+        {/* <div className="flex flex-col items-center mr-4">
+          <span className="text-center">cols</span>
+          <div className="flex justify-between">
+            <button
+              className="shadow rounded-sm py-1 px-2"
+              onClick={() => setGrid("cols", true)}
+            >
+              +
+            </button>
+            <button
+              className="shadow rounded-sm py-1 px-2"
+              onClick={() => setGrid("cols", false)}
+            >
+              -
+            </button>
           </div>
-        )}
-        <div className="py-4 pt-8">
-          <h1 className="text-center text-4xl">
-            {humidity[humidity.length - 1].humidity}%
-          </h1>
-          <span>
-            {parseInt(
-              (new Date().getTime() -
-                parseInt(humidity[humidity.length - 1].timestamp)) /
-                1000 /
-                60
-            )}{" "}
-            {parseInt(
-              (new Date().getTime() -
-                parseInt(humidity[humidity.length - 1].timestamp)) /
-                1000 /
-                60
-            ) == 1
-              ? " minute"
-              : " minutes"}{" "}
-            ago (
-            {format(
-              new Date(humidity[humidity.length - 1].timestamp),
-              "MMMM do yyyy HH:mm"
-            )}
-            )
-          </span>
-        </div>
-        <div className="h-4/5 w-11/12 flex justify-center">
-          {humidity && (
-            <Graph
-              dataset={humidity}
-              valueName="humidity"
-              colorRgb="51, 153, 255"
-            />
-          )}
-        </div>
-        <div>
-          {/* <button onClick={() => setValue('main', 'private', {last_porn: new Date().getTime()})}>I watched Porn ({})</button>
-        <button onClick={() => setValue('main', 'private', {last_smoke: new Date().getTime()})}>I smoked</button>
-        <button onClick={() => setValue('main', 'private', {last_weed: new Date().getTime()})}>I smoked weed</button>
-        <button onClick={() => setValue('main', 'private', {last_masturbation: new Date().getTime()})}>I masturbated</button>
-        <button onClick={() => setValue('main', 'private', {last_ejaculation: new Date().getTime()})}>I ejaculated</button> */}
+        </div> */}
+        <div className="flex flex-col items-center">
+          <span className="text-center">rows</span>
+          <div className="flex justify-between">
+            <button
+              className="shadow rounded-sm py-1 px-2"
+              onClick={() => setGrid("rows", true)}
+            >
+              +
+            </button>
+            <button
+              className="shadow rounded-sm py-1 px-2"
+              onClick={() => setGrid("rows", false)}
+            >
+              -
+            </button>
+          </div>
         </div>
       </div>
     </main>
@@ -142,13 +191,16 @@ export default function Home({ temperature, humidity, main }) {
 export const getServerSideProps = async () => {
   const temp = await fetch(process.env.HOST + "/api/temperature");
   const hum = await fetch(process.env.HOST + "/api/humidity");
+  const smok = await fetch(process.env.HOST + "/api/smoke");
+  const eja = await fetch(process.env.HOST + "/api/ejaculation");
   const main = await getValue("main", "test");
 
   const temperature = await temp.json();
   const humidity = await hum.json();
-  console.log(humidity);
+  const smoke = await smok.json();
+  const ejaculation = await eja.json();
 
-  if (!temp.ok || !hum.ok) {
+  if (!temp.ok || !hum.ok || !smok.ok || !eja.ok) {
     // This will activate the closest `error.js` Error Boundary
     throw new Error("Failed to fetch data");
   }
@@ -157,6 +209,8 @@ export const getServerSideProps = async () => {
     props: {
       temperature,
       humidity,
+      smoke,
+      ejaculation,
       main,
     },
     // revalidate: 60

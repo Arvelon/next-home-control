@@ -7,7 +7,7 @@ const metadata = {
 
 export default function App({ Component, pageProps }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning={true}>
       <body>
         <Component {...pageProps} />
       </body>
