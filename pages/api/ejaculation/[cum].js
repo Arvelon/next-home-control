@@ -9,8 +9,8 @@ export default async function handler(req, res) {
   const { query } = req;
   const { hum } = query;
 
-  console.log("GET /humidity/add");
-  const data = await addValue("humidity_log", {timestamp: new Date().getTime(), humidity: hum});
+  console.log("GET /ejaculation/add");
+  const data = await addValue("ejaculation_log", {timestamp: new Date().getTime(), humidity: hum});
   // console.log(data);
   res.status(200).json(data);
 }

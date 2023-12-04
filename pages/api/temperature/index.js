@@ -7,7 +7,7 @@ const dataFilePath = path.join(process.cwd(), "db/data.json");
 
 export default async function handler(req, res) {
     console.log("GET /temperature");
-    const data = await getAll("temperature_log", 75);
+    const data = await getAll("temperature_log", 50);
 
 
     const tempsPerDay = {}

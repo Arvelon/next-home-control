@@ -16,6 +16,8 @@ export default function Home({ temperature, humidity, smoke, ejaculation, main }
   const [jActive, setJActive] = useState(false);
   const [eActive, setEActive] = useState(false);
 
+  const [liveTemp, setLiveTemp] = useState(temperature)
+
   const focusHandler = (card, action, e) => {
     // console.log(card, action);
     // console.log(e);
@@ -26,7 +28,11 @@ export default function Home({ temperature, humidity, smoke, ejaculation, main }
         : card
     );
   };
-  // setTimeout(() => window.location.reload(true), 300000)
+  
+  const interval = setInterval(async () => {
+    const temp = await fetch(process.env.HOST + "/api/temperature");
+    setLiveTemp(await temp.json())
+  }, 300)
 
   const setGrid = async (direction, increase) => {
     const config = await getValue("main", "config");
@@ -58,7 +64,7 @@ export default function Home({ temperature, humidity, smoke, ejaculation, main }
       <CardChart
         disabled={!tActive}
         activeCard={activeCard}
-        data={temperature}
+        data={liveTemp}
         color="255, 99, 132"
         namespace="temperature"
         mode={mode}
