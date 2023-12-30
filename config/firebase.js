@@ -84,9 +84,9 @@ export const getAll = async (list, size) => {
 };
 
 export const getAggregation = async (list, size, frame) => {
-  const coll = collection(db, "tempeprature_log");
+  const coll = collection(db, "temperature_log");
   const snapshot = await getAggregateFromServer(coll, {
-    averagePopulation: average("temperature"),
+    avgTemp: average("temperature"),
   });
 
   console.log("averagePopulation: ", snapshot.data().averagePopulation);

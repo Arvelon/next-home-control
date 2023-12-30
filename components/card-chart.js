@@ -13,6 +13,7 @@ export default function CardChart({
   scale,
   disabled,
 }) {
+  console.log(data)
   return (
     <>
       {!disabled && (
@@ -33,8 +34,8 @@ export default function CardChart({
               />
             </div>
           )}
-          <div className="py-4 pt-8">
-            <h1 className="text-center text-4xl">
+          {/* <div className="py-4 pt-8"> */}
+            {/* <h1 className="text-center text-4xl">
               {scale == "date"
                 ? data[format(new Date(), "MM-dd-yyyy")] ||
                   0 + (" " + unit || " units")
@@ -64,8 +65,8 @@ export default function CardChart({
                 )}
                 )
               </span>
-            )}
-          </div>
+            )} */}
+          {/* </div> */}
 
           {data && (
             <Graph

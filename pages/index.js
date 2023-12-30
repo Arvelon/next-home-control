@@ -7,16 +7,15 @@ import { AiFillCloseCircle } from "react-icons/ai";
 import CardChart from "@/components/card-chart";
 import { ta } from "date-fns/locale";
 
-export default function Home({ temperature, humidity, smoke, ejaculation, main }) {
+export default function Home({ data }) {
   const [activeCard, setActiveCard] = useState(false);
-  const [gridState, setGridState] = useState("grid-cols-1 grid-rows-2");
+  // const [gridState, setGridState] = useState("grid-cols-1 grid-rows-2");
   const [mode, setMode] = useState("line");
   const [tActive, setTActive] = useState(true);
   const [hActive, setHActive] = useState(true);
-  const [jActive, setJActive] = useState(false);
-  const [eActive, setEActive] = useState(false);
+  // const [jActive, setJActive] = useState(false);
+  // const [eActive, setEActive] = useState(false);
 
-  const [liveTemp, setLiveTemp] = useState(temperature)
 
   const focusHandler = (card, action, e) => {
     // console.log(card, action);
@@ -29,26 +28,26 @@ export default function Home({ temperature, humidity, smoke, ejaculation, main }
     );
   };
   
-  const interval = setInterval(async () => {
-    const temp = await fetch(process.env.HOST + "/api/temperature");
-    setLiveTemp(await temp.json())
-  }, 300)
+  // const interval = setInterval(async () => {
+  //   const temp = await fetch(process.env.HOST + "/api/temperature");
+  //   setLiveTemp(await temp.json())
+  // }, 300)
 
-  const setGrid = async (direction, increase) => {
-    const config = await getValue("main", "config");
-    console.log(config);
+  // const setGrid = async (direction, increase) => {
+  //   const config = await getValue("main", "config");
+  //   console.log(config);
 
-    if (increase) {
-      config[direction] += 1;
-    } else {
-      config[direction] -= 1;
-    }
-    // console.log("r", config);
-    const gridString = "grid-rows-" + config.rows + " grid-cols-" + config.cols;
-    setGridState(gridString);
-    setValue("main", "config", config);
-    // console.log(gridString);
-  };
+  //   if (increase) {
+  //     config[direction] += 1;
+  //   } else {
+  //     config[direction] -= 1;
+  //   }
+  //   // console.log("r", config);
+  //   const gridString = "grid-rows-" + config.rows + " grid-cols-" + config.cols;
+  //   setGridState(gridString);
+  //   setValue("main", "config", config);
+  //   // console.log(gridString);
+  // };
   // setGrid('cols', false)
 
   // useEffect(() => {
@@ -60,164 +59,64 @@ export default function Home({ temperature, humidity, smoke, ejaculation, main }
   // })
 
   return (
-    <main className={`h-screen pb-24`}>
-      <CardChart
-        disabled={!tActive}
-        activeCard={activeCard}
-        data={liveTemp}
-        color="255, 99, 132"
-        namespace="temperature"
+    <div className={`h-screen pb-24 flex flex-col items-center bg-white`}>
+      <h1 className="text-black mt-4 text-2xl">{data[0].temperature}°C</h1>
+      <Graph
         mode={mode}
-        focusHandler={focusHandler}
-        unit="°C"
+        dataset={data}
+        scale={"time"}
+        valueName="temperature"
+        colorRgb="255, 99, 132"
+        // dayMode
       />
-
-      <CardChart
-        disabled={!hActive}
-        activeCard={activeCard}
-        data={humidity}
-        color="51, 153, 255"
-        namespace="humidity"
+      <h1 className="text-black mt-4 text-2xl">{data[0].humidity}%</h1>
+      <Graph
         mode={mode}
-        focusHandler={focusHandler}
-        unit="%"
+        dataset={data}
+        scale={"time"}
+        valueName="humidity"
+        colorRgb="51, 153, 255"
+        // dayMode
       />
-
-      <CardChart
-        disabled={!jActive}
-        activeCard={activeCard}
-        data={smoke}
-        color="0, 204, 0"
-        scale="date"
-        namespace="smoke"
-        mode={mode}
-        focusHandler={focusHandler}
-        unit="joints"
-      />
-
-      <CardChart
-        disabled={!eActive}
-        activeCard={activeCard}
-        data={ejaculation}
-        color="0, 204, 0"
-        scale="date"
-        namespace="ejaculation"
-        mode={mode}
-        focusHandler={focusHandler}
-        unit="ejaculations"
-      />
-
-      <div className="fixed flex w-screen bg-white bottom-0 p-4 z-40">
-        <button
-          className="shadow rounded-sm py-1 px-2 mr-4"
-          onClick={() => setMode(mode === "line" ? "bar" : "line")}
-        >
-          {mode === "line" ? "Bar Chart" : "Line Chart"}
-        </button>
-        <button
-          className="shadow rounded-sm py-1 px-2 mr-4"
-          onClick={() =>
-            addValue("smoke_log", { timestamp: new Date().getTime() })
-          }
-        >
-          Log Generic
-        </button>
-        <button
-          className="shadow rounded-sm py-1 px-2 mr-4"
-          onClick={() =>
-            addValue("ejaculation_log", { timestamp: new Date().getTime() })
-          }
-        >
-          Log Enumeration
-        </button>
-        <button
-          className="shadow rounded-sm py-1 px-2 mr-4"
-          onClick={() => setTActive(!tActive)}
-        >
-          Temperature
-        </button>
-        <button
-          className="shadow rounded-sm py-1 px-2 mr-4"
-          onClick={() => setHActive(!hActive)}
-        >
-          Humidity
-        </button>
-        <button
-          className="shadow rounded-sm py-1 px-2 mr-4"
-          onClick={() => setJActive(!jActive)}
-        >
-          {/* Joints */}
-          Generic
-        </button>
-        <button
-          className="shadow rounded-sm py-1 px-2 mr-4"
-          onClick={() => setEActive(!eActive)}
-        >
-          {/* Joints */}
-          Enumeration
-        </button>
-        {/* <div className="flex flex-col items-center mr-4">
-          <span className="text-center">cols</span>
-          <div className="flex justify-between">
-            <button
-              className="shadow rounded-sm py-1 px-2"
-              onClick={() => setGrid("cols", true)}
-            >
-              +
-            </button>
-            <button
-              className="shadow rounded-sm py-1 px-2"
-              onClick={() => setGrid("cols", false)}
-            >
-              -
-            </button>
-          </div>
-        </div> */}
-        <div className="flex flex-col items-center">
-          <span className="text-center">rows</span>
-          <div className="flex justify-between">
-            <button
-              className="shadow rounded-sm py-1 px-2"
-              onClick={() => setGrid("rows", true)}
-            >
-              +
-            </button>
-            <button
-              className="shadow rounded-sm py-1 px-2"
-              onClick={() => setGrid("rows", false)}
-            >
-              -
-            </button>
-          </div>
-        </div>
-      </div>
-    </main>
+    </div>
   );
 }
 export const getServerSideProps = async () => {
-  const temp = await fetch(process.env.HOST + "/api/temperature");
-  const hum = await fetch(process.env.HOST + "/api/humidity");
-  const smok = await fetch(process.env.HOST + "/api/smoke");
-  const eja = await fetch(process.env.HOST + "/api/ejaculation");
-  const main = await getValue("main", "test");
+  // const temp = await fetch(process.env.HOST + "/api/temperature");
+  // const hum = await fetch(process.env.HOST + "/api/humidity");
+  // const smok = await fetch(process.env.HOST + "/api/smoke");
+  // const eja = await fetch(process.env.HOST + "/api/ejaculation");
+  // const main = await getValue("main", "test");
 
-  const temperature = await temp.json();
-  const humidity = await hum.json();
-  const smoke = await smok.json();
-  const ejaculation = await eja.json();
+  // const temperature = await temp.json();
+  // const humidity = await hum.json();
+  // const smoke = await smok.json();
+  // const ejaculation = await eja.json();
 
-  if (!temp.ok || !hum.ok || !smok.ok || !eja.ok) {
-    // This will activate the closest `error.js` Error Boundary
-    throw new Error("Failed to fetch data");
-  }
+  // if (!temp.ok || !hum.ok || !smok.ok || !eja.ok) {
+  //   // This will activate the closest `error.js` Error Boundary
+  //   throw new Error("Failed to fetch data");
+  // }
 
+  const url = process.env.HOST + '/latest'
+  // Create headers object with the custom header
+  const headers = new Headers();
+  headers.append('ngrok-skip-browser-warning', 'true');
+  
+  // Fetch with custom headers
+  const res = await fetch(url, {
+    method: 'GET', // or 'POST' or other HTTP methods
+    headers: headers,
+  })
+  const data = await res.json()
   return {
     props: {
-      temperature,
-      humidity,
-      smoke,
-      ejaculation,
-      main,
+      data: data.data,
+      // temperature,
+      // humidity,
+      // smoke,
+      // ejaculation,
+      // main,
     },
     // revalidate: 60
   };
