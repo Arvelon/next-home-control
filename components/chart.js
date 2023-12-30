@@ -23,7 +23,8 @@ export default function Graph({
   mode,
   scale,
   disabled,
-  dayMode
+  dayMode,
+  precision
 }) {
   console.log(scale)
   if (disabled) return "Data Source Offline";
@@ -39,12 +40,11 @@ export default function Graph({
     Tooltip,
     Legend
   );
-  // console.log(dataset);
 
   const temparr =
     scale == "date"
       ? Object.values(dataset)
-      : dataset.map((entry) => parseFloat(entry[valueName]));
+      : dataset.slice(-precision).map((entry) => parseFloat(entry[valueName]));
   const min = Math.min(...temparr);
   const max = Math.max(...temparr);
   const options = {
@@ -84,14 +84,14 @@ export default function Graph({
 
   const labels =
     scale == "date"
-      ? Object.keys(dataset).map((ts) => new Date(ts))
-      : dataset.map((i, key) => new Date(i.timestamp));
+      ? Object.keys(dataset.slice(-precision)).map((ts) => new Date(ts))
+      : dataset.slice(-precision).map((i, key) => new Date(i.timestamp));
   // console.log(labels);
 
   const temps =
     scale == "date"
-      ? Object.values(dataset)
-      : dataset.map((i, key) => parseFloat(i[valueName]));
+      ? Object.values(dataset.slice(-precision))
+      : dataset.slice(-precision).map((i, key) => parseFloat(i[valueName]));
   // console.log(temps);
 
   // const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
