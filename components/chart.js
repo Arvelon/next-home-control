@@ -26,10 +26,10 @@ export default function Graph({
   dayMode,
   precision
 }) {
-  console.log(scale)
+  // console.log(scale)
   if (disabled) return "Data Source Offline";
 
-  console.log(dataset);
+  // console.log(dataset);
   ChartJS.register(
     CategoryScale,
     TimeScale,

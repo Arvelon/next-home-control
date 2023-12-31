@@ -17,11 +17,17 @@ export default function Home({ data }) {
   // const [jActive, setJActive] = useState(false);
   // const [eActive, setEActive] = useState(false);
 
+  const [timer, setTimer] = useState(60);
+
   useEffect(() => {
     const intervalId = setInterval(() => {
       // Reload the current page
       location.reload();
     }, 60000);
+
+    const counterInterval = setInterval(() => {
+      setTimer(prevTimer => prevTimer - 1);
+    }, 1000);
 
     // Cleanup the interval when the component unmounts
     return () => clearInterval(intervalId);
@@ -37,7 +43,7 @@ export default function Home({ data }) {
         : card
     );
   };
-  
+
   // const interval = setInterval(async () => {
   //   const temp = await fetch(process.env.HOST + "/api/temperature");
   //   setLiveTemp(await temp.json())
@@ -69,12 +75,39 @@ export default function Home({ data }) {
   // })
 
   return (
-    <div className={`h-screen pb-24 flex flex-col items-center bg-white text-black`}>
-      <h1 className="text-black mt-4 mb-2 text-2xl">{data[0].temperature.toFixed(2)}°C</h1>
+    <div
+      className={`h-screen pb-24 flex flex-col items-center bg-white text-black`}
+    >
+      <div className="absolute right-0 px-2 py-1">{timer}</div>
+
+      <h1 className="text-black mt-4 mb-2 text-2xl">
+        {data[0].temperature.toFixed(2)}°C
+      </h1>
       <div className="flex mb-2">
-        <button onClick={() => setTemperaturePrecision(1440)} className={`border py-1 w-12 ${temperaturePrecision === 1440 ? 'font-bold' : ''}`}>24h</button>
-        <button onClick={() => setTemperaturePrecision(60)} className={`border py-1 w-12 ${temperaturePrecision === 60 ? 'font-bold' : ''}`}>1h</button>
-        <button onClick={() => setTemperaturePrecision(10)} className={`border py-1 w-12 ${temperaturePrecision === 10 ? 'font-bold' : ''}`}>10m</button>
+        <button
+          onClick={() => setTemperaturePrecision(1440)}
+          className={`border py-1 w-12 ${
+            temperaturePrecision === 1440 ? "font-bold" : ""
+          }`}
+        >
+          24h
+        </button>
+        <button
+          onClick={() => setTemperaturePrecision(60)}
+          className={`border py-1 w-12 ${
+            temperaturePrecision === 60 ? "font-bold" : ""
+          }`}
+        >
+          1h
+        </button>
+        <button
+          onClick={() => setTemperaturePrecision(10)}
+          className={`border py-1 w-12 ${
+            temperaturePrecision === 10 ? "font-bold" : ""
+          }`}
+        >
+          10m
+        </button>
       </div>
       <Graph
         mode={mode}
@@ -85,11 +118,34 @@ export default function Home({ data }) {
         colorRgb="255, 99, 132"
         // dayMode
       />
-      <h1 className="text-black mt-4 text-2xl">{data[0].humidity.toFixed(2)}%</h1>
+      <h1 className="text-black mt-4 text-2xl">
+        {data[0].humidity.toFixed(2)}%
+      </h1>
       <div className="flex mb-2">
-        <button onClick={() => setHumidityPrecision(1440)} className={`border py-1 w-12 ${humidityPrecision === 1440 ? 'font-bold' : ''}`}>24h</button>
-        <button onClick={() => setHumidityPrecision(60)} className={`border py-1 w-12 ${humidityPrecision === 60 ? 'font-bold' : ''}`}>1h</button>
-        <button onClick={() => setHumidityPrecision(10)} className={`border py-1 w-12 ${humidityPrecision === 10 ? 'font-bold' : ''}`}>10m</button>
+        <button
+          onClick={() => setHumidityPrecision(1440)}
+          className={`border py-1 w-12 ${
+            humidityPrecision === 1440 ? "font-bold" : ""
+          }`}
+        >
+          24h
+        </button>
+        <button
+          onClick={() => setHumidityPrecision(60)}
+          className={`border py-1 w-12 ${
+            humidityPrecision === 60 ? "font-bold" : ""
+          }`}
+        >
+          1h
+        </button>
+        <button
+          onClick={() => setHumidityPrecision(10)}
+          className={`border py-1 w-12 ${
+            humidityPrecision === 10 ? "font-bold" : ""
+          }`}
+        >
+          10m
+        </button>
       </div>
       <Graph
         mode={mode}
@@ -101,9 +157,20 @@ export default function Home({ data }) {
         // dayMode
       />
       <div className="flex flex-col w-11/12 mt-4">
-        <p>Stack size: {data.length}</p>
-        <p>Latest datapoint: <span className={(new Date(data[0].timestamp) < (subMinutes(new Date(), 1))) ? 'text-red-500' : 'text-green-500'}>{data[0].timestamp}</span></p>
-        <p>Oldest datapoint: {data[data.length-1].timestamp}</p>
+        <p>Stack size: <span className={data.length >= 1440 ? 'text-green-500' : data.length >= 60 ? 'text-yellow-500' : 'text-red-500'}>{data.length} {data.length < 1440 ? '(' + (data.length / 1440 * 100).toFixed(0) + '%)' : ''}</span></p>
+        <p>
+          Latest datapoint:{" "}
+          <span
+            className={
+              new Date(data[0].timestamp) < subMinutes(new Date(), 2)
+                ? "text-red-500"
+                : "text-green-500"
+            }
+          >
+            {data[0].timestamp}
+          </span>
+        </p>
+        <p>Oldest datapoint: {data[data.length - 1].timestamp}</p>
       </div>
     </div>
   );
@@ -125,17 +192,17 @@ export const getServerSideProps = async () => {
   //   throw new Error("Failed to fetch data");
   // }
 
-  const url = process.env.HOST + '/latest'
+  const url = process.env.HOST + "/latest";
   // Create headers object with the custom header
   const headers = new Headers();
-  headers.append('ngrok-skip-browser-warning', 'true');
-  
+  headers.append("ngrok-skip-browser-warning", "true");
+
   // Fetch with custom headers
   const res = await fetch(url, {
-    method: 'GET', // or 'POST' or other HTTP methods
+    method: "GET", // or 'POST' or other HTTP methods
     headers: headers,
-  })
-  const data = await res.json()
+  });
+  const data = await res.json();
   return {
     props: {
       data: data.data,
