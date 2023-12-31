@@ -17,6 +17,15 @@ export default function Home({ data }) {
   // const [jActive, setJActive] = useState(false);
   // const [eActive, setEActive] = useState(false);
 
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      // Reload the current page
+      location.reload();
+    }, 60000);
+
+    // Cleanup the interval when the component unmounts
+    return () => clearInterval(intervalId);
+  }, []); // Empty dependency array ensures the effect runs only once on mount
 
   const focusHandler = (card, action, e) => {
     // console.log(card, action);
