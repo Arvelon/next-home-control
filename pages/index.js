@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Graph from "../components/chart";
-import { format, formatDistance } from "date-fns";
+import { format, formatDistance, subMinutes } from "date-fns";
 import { addValue, getValue, setValue } from "@/config/firebase";
 import { useEffect, useState } from "react";
 import { AiFillCloseCircle } from "react-icons/ai";
@@ -92,7 +92,9 @@ export default function Home({ data }) {
         // dayMode
       />
       <div className="flex flex-col w-11/12 mt-4">
-        <p>Stack size: {data.length}</p><p>Latest datapoint: {data[0].timestamp}</p><p>Oldest datapoint: {data[data.length-1].timestamp}</p>
+        <p>Stack size: {data.length}</p>
+        <p>Latest datapoint: <span className={(new Date(data[0].timestamp) < (subMinutes(new Date(), 1))) ? 'text-red-500' : 'text-green-500'}>{data[0].timestamp}</span></p>
+        <p>Oldest datapoint: {data[data.length-1].timestamp}</p>
       </div>
     </div>
   );
