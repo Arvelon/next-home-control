@@ -76,11 +76,11 @@ export default function Home({ data }) {
 
   return (
     <div
-      className={`h-screen pb-24 flex flex-col items-center bg-white text-black`}
+      className={`h-screen pb-24 flex flex-col items-center bg-slate-950 text-slate-300`}
     >
       <div className="absolute right-0 px-2 py-1">{timer}</div>
 
-      <h1 className="text-black mt-4 mb-2 text-2xl">
+      <h1 className="text-slate-300 mt-4 mb-2 text-2xl">
         {data[0].temperature.toFixed(2)}°C
       </h1>
       <div className="flex mb-2">
@@ -118,7 +118,7 @@ export default function Home({ data }) {
         colorRgb="255, 99, 132"
         // dayMode
       />
-      <h1 className="text-black mt-4 text-2xl">
+      <h1 className="text-slate-300 mt-4 mb-2 text-2xl">
         {data[0].humidity.toFixed(2)}%
       </h1>
       <div className="flex mb-2">

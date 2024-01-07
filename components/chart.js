@@ -105,7 +105,7 @@ export default function Graph({
         fill: true,
         borderWidth: 1.5,
         borderColor: `rgba(${colorRgb || "255, 99, 132"}, 1)`,
-        backgroundColor: `rgba(${colorRgb || "255, 99, 132"}, 0.3)`,
+        backgroundColor: `rgba(${colorRgb || "255, 99, 132"}, 0.2)`,
       },
     ],
   };
