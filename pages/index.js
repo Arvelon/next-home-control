@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Graph from "../components/chart";
-import { format, formatDistance, subMinutes } from "date-fns";
+import { format, formatDistance, subDays, subMinutes } from "date-fns";
 import { addValue, getValue, setValue } from "@/config/firebase";
 import { useEffect, useState } from "react";
 import { AiFillCloseCircle } from "react-icons/ai";
@@ -16,7 +16,7 @@ export default function Home({ data }) {
   const [hActive, setHActive] = useState(true);
   // const [jActive, setJActive] = useState(false);
   // const [eActive, setEActive] = useState(false);
-
+// console.log(data)
   const [timer, setTimer] = useState(60);
 
   useEffect(() => {
@@ -29,9 +29,18 @@ export default function Home({ data }) {
       setTimer(prevTimer => prevTimer - 1);
     }, 1000);
 
+    setTemperaturePrecision(parseInt(localStorage.getItem('temperaturePrecision')))
+    setHumidityPrecision(parseInt(localStorage.getItem('humhumidityPrecision')))
+
     // Cleanup the interval when the component unmounts
     return () => clearInterval(intervalId);
   }, []); // Empty dependency array ensures the effect runs only once on mount
+
+
+  useEffect(() => {
+    localStorage.setItem('temperaturePrecision', temperaturePrecision)
+    localStorage.setItem('humhumidityPrecision', humidityPrecision)
+  }, [temperaturePrecision, humidityPrecision])
 
   const focusHandler = (card, action, e) => {
     // console.log(card, action);
@@ -203,9 +212,12 @@ export const getServerSideProps = async () => {
     headers: headers,
   });
   const data = await res.json();
+
+  const dataPoints = data.data.filter(entry => new Date(entry.timestamp).getTime() < subDays(new Date(), 1))
+
   return {
     props: {
-      data: data.data,
+      data: dataPoints,
       // temperature,
       // humidity,
       // smoke,
