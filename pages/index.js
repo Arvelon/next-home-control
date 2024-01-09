@@ -29,8 +29,8 @@ export default function Home({ data }) {
       setTimer(prevTimer => prevTimer - 1);
     }, 1000);
 
-    setTemperaturePrecision(parseInt(localStorage.getItem('temperaturePrecision')))
-    setHumidityPrecision(parseInt(localStorage.getItem('humhumidityPrecision')))
+    setTemperaturePrecision(parseInt(localStorage.getItem('temperaturePrecision')) || 60)
+    setHumidityPrecision(parseInt(localStorage.getItem('humidityPrecision')) || 60)
 
     // Cleanup the interval when the component unmounts
     return () => clearInterval(intervalId);
@@ -38,8 +38,9 @@ export default function Home({ data }) {
 
 
   useEffect(() => {
+    console.log(temperaturePrecision, humidityPrecision)
     localStorage.setItem('temperaturePrecision', temperaturePrecision)
-    localStorage.setItem('humhumidityPrecision', humidityPrecision)
+    localStorage.setItem('humidityPrecision', humidityPrecision)
   }, [temperaturePrecision, humidityPrecision])
 
   const focusHandler = (card, action, e) => {
@@ -213,11 +214,11 @@ export const getServerSideProps = async () => {
   });
   const data = await res.json();
 
-  const dataPoints = data.data.filter(entry => new Date(entry.timestamp).getTime() < subDays(new Date(), 1))
+  // const dataPoints = data.data.filter(entry => new Date(entry.timestamp).getTime() < subDays(new Date(), 1))
 
   return {
     props: {
-      data: dataPoints,
+      data: data.data,
       // temperature,
       // humidity,
       // smoke,
