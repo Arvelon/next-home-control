@@ -29,9 +29,18 @@ export default function Home({ data }) {
       setTimer(prevTimer => prevTimer - 1);
     }, 1000);
 
+    setTemperaturePrecision(parseInt(localStorage.getItem('temperaturePrecision')))
+    setHumidityPrecision(parseInt(localStorage.getItem('humhumidityPrecision')))
+
     // Cleanup the interval when the component unmounts
     return () => clearInterval(intervalId);
   }, []); // Empty dependency array ensures the effect runs only once on mount
+
+
+  useEffect(() => {
+    localStorage.setItem('temperaturePrecision', temperaturePrecision)
+    localStorage.setItem('humhumidityPrecision', humidityPrecision)
+  }, [temperaturePrecision, humidityPrecision])
 
   const focusHandler = (card, action, e) => {
     // console.log(card, action);
