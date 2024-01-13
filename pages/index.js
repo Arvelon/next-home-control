@@ -7,7 +7,7 @@ import { AiFillCloseCircle } from "react-icons/ai";
 import CardChart from "@/components/card-chart";
 import { ta } from "date-fns/locale";
 
-export default function Home({ data }) {
+export default function Home({ data, aggregated_data }) {
   const [activeCard, setActiveCard] = useState(false);
   // const [gridState, setGridState] = useState("grid-cols-1 grid-rows-2");
   const [mode, setMode] = useState("line");
@@ -20,7 +20,7 @@ export default function Home({ data }) {
   // const [eActive, setEActive] = useState(false);
 // console.log(data)
   const [timer, setTimer] = useState(60);
-
+console.log(aggregated_data)
   useEffect(() => {
     const intervalId = setInterval(() => {
       // Reload the current page
@@ -136,6 +136,15 @@ export default function Home({ data }) {
         colorRgb="255, 99, 132"
         // dayMode
       />
+      <Graph
+        mode={tempBarMode}
+        dataset={aggregated_data}
+        precision={1000}
+        scale={"time"}
+        valueName="temperature"
+        colorRgb="255, 99, 132"
+        // dayMode
+      />
       <h1 className="text-slate-300 mt-4 mb-2 text-2xl">
         {data[0].humidity.toFixed(2)}%
       </h1>
@@ -216,7 +225,7 @@ export const getServerSideProps = async () => {
   //   throw new Error("Failed to fetch data");
   // }
 
-  const url = process.env.HOST + "/latest";
+  const url = process.env.HOST + "/n/1440";
   // Create headers object with the custom header
   const headers = new Headers();
   headers.append("ngrok-skip-browser-warning", "true");
@@ -231,9 +240,21 @@ export const getServerSideProps = async () => {
   const dataPoints = data.data.filter(entry => new Date(entry.timestamp).getTime() > subDays(new Date(), 1))
   console.log(dataPoints)
 
+  const agg_url = process.env.HOST + "/aggregated/all";
+  
+  
+
+  // Fetch with custom headers
+  const agg_res = await fetch(agg_url, {
+    method: "GET", // or 'POST' or other HTTP methods
+    headers: headers,
+  });
+  const agg_data = await agg_res.json();
+
   return {
     props: {
       data: dataPoints,
+      aggregated_data: agg_data.data
       // temperature,
       // humidity,
       // smoke,
