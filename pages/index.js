@@ -93,139 +93,29 @@ export default function Home({ data, aggregated_data, cum_data }) {
     window.location.reload();
   };
 
-  return (
-    <div
-      className={`h-screen pb-24 flex flex-col items-center bg-slate-950 text-slate-300`}
-    >
-      <div className="absolute right-0 px-2 py-1">{timer}</div>
+  const dataValidator = (fullStack) => {
 
-      <h1 className="text-slate-300 mt-4 mb-2 text-2xl">
-        {data[0].temperature.toFixed(2)}°C
-      </h1>
-      <div className="flex mb-2">
-        <button
-          onClick={() => setTemperaturePrecision(1440)}
-          className={`border py-1 w-12 ${
-            temperaturePrecision === 1440 ? "font-bold" : ""
-          }`}
-        >
-          24h
-        </button>
-        <button
-          onClick={() => setTemperaturePrecision(60)}
-          className={`border py-1 w-12 ${
-            temperaturePrecision === 60 ? "font-bold" : ""
-          }`}
-        >
-          1h
-        </button>
-        <button
-          onClick={() => setTemperaturePrecision(10)}
-          className={`border py-1 w-12 ${
-            temperaturePrecision === 10 ? "font-bold" : ""
-          }`}
-        >
-          10m
-        </button>
-        <button
-          onClick={() => setTempBarMode(!tempBarMode)}
-          className={`border py-1 w-12`}
-        >
-          {tempBarMode ? "Line" : "Bar"}
-        </button>
-      </div>
-      <Graph
-        mode={tempBarMode}
-        dataset={data}
-        precision={temperaturePrecision}
-        scale={"time"}
-        valueName="temperature"
-        colorRgb="255, 99, 132"
-        // dayMode
-      />
-      <Graph
-        mode={tempBarMode}
-        dataset={aggregated_data}
-        precision={1000}
-        scale={"time"}
-        valueName="temperature"
-        colorRgb="255, 99, 132"
-        labelOverride="Aggregated Temperature"
-        // dayMode
-      />
-      <h1 className="text-slate-300 mt-4 mb-2 text-2xl">
-        {data[0].humidity.toFixed(2)}%
-      </h1>
-      <div className="flex mb-2">
-        <button
-          onClick={() => setHumidityPrecision(1440)}
-          className={`border py-1 w-12 ${
-            humidityPrecision === 1440 ? "font-bold" : ""
-          }`}
-        >
-          24h
-        </button>
-        <button
-          onClick={() => setHumidityPrecision(60)}
-          className={`border py-1 w-12 ${
-            humidityPrecision === 60 ? "font-bold" : ""
-          }`}
-        >
-          1h
-        </button>
-        <button
-          onClick={() => setHumidityPrecision(10)}
-          className={`border py-1 w-12 ${
-            humidityPrecision === 10 ? "font-bold" : ""
-          }`}
-        >
-          10m
-        </button>
-        <button
-          onClick={() => setHumbarMode(!humbarMode)}
-          className={`border py-1 w-12`}
-        >
-          {tempBarMode ? "Line" : "Bar"}
-        </button>
-      </div>
-      <Graph
-        mode={humbarMode}
-        dataset={data}
-        scale={"time"}
-        precision={humidityPrecision}
-        valueName="humidity"
-        colorRgb="51, 153, 255"
-        // dayMode
-      />
-      {!!cum_data.length && (
-        <>
-          <Graph
-            mode={humbarMode}
-            dataset={cum_data}
-            scale={"time"}
-            precision={365}
-            valueName="humidity"
-            colorRgb="51, 153, 255"
-            labelOverride="Pressure release"
-            // dayMode
-          />
-          <div className="flex mb-2">
-            <button onClick={() => addCum()} className={`border py-1 w-12`}>
-              Add
-            </button>
-          </div>
-        </>
-      )}
+    // These conditions have overlap, but they are executet in the right order so there is no issue
+    const green = data.length == fullStack
+
+    const yellow = data.length < (fullStack / 4 * 3) || data.length < fullStack // > 75% && !green
+
+    const red = data.length < (fullStack / 4 * 3)
+
+    const cyan = data.length > fullStack * 1.2
+
+    return (
       <div className="flex flex-col w-11/12 mt-4">
         <p>
           Stack size:{" "}
           <span
             className={
-              data.length >= 1440
-                ? "text-green-500"
-                : data.length >= 60
-                ? "text-yellow-500"
-                : "text-red-500"
+              cyan ? "text-cyan-500" :
+                green
+                  ? "text-green-500"
+                  : red
+                    ? "text-red-500"
+                    : "text-yellow-500"
             }
           >
             {data.length}{" "}
@@ -248,25 +138,131 @@ export default function Home({ data, aggregated_data, cum_data }) {
         </p>
         <p>Oldest datapoint: {data[data.length - 1].timestamp}</p>
       </div>
+    )
+  }
+
+  return (
+    <div
+      className={`h-screen pb-24 flex flex-col items-center bg-slate-950 text-slate-300`}
+    >
+      <div className="absolute right-0 px-2 py-1">{timer}</div>
+
+      <h1 className="text-slate-300 mt-4 mb-2 text-2xl">
+        {data[0].temperature.toFixed(2)}°C
+      </h1>
+      <div className="flex mb-2">
+        <button
+          onClick={() => setTemperaturePrecision(1440)}
+          className={`border py-1 w-12 ${temperaturePrecision === 1440 ? "font-bold" : ""
+            }`}
+        >
+          24h
+        </button>
+        <button
+          onClick={() => setTemperaturePrecision(60)}
+          className={`border py-1 w-12 ${temperaturePrecision === 60 ? "font-bold" : ""
+            }`}
+        >
+          1h
+        </button>
+        <button
+          onClick={() => setTemperaturePrecision(10)}
+          className={`border py-1 w-12 ${temperaturePrecision === 10 ? "font-bold" : ""
+            }`}
+        >
+          10m
+        </button>
+        <button
+          onClick={() => setTempBarMode(!tempBarMode)}
+          className={`border py-1 w-12`}
+        >
+          {tempBarMode ? "Line" : "Bar"}
+        </button>
+      </div>
+      <Graph
+        mode={tempBarMode}
+        dataset={data}
+        precision={temperaturePrecision}
+        scale={"time"}
+        valueName="temperature"
+        colorRgb="255, 99, 132"
+      // dayMode
+      />
+      <Graph
+        mode={tempBarMode}
+        dataset={aggregated_data}
+        precision={1000}
+        scale={"time"}
+        valueName="temperature"
+        colorRgb="255, 99, 132"
+        labelOverride="Aggregated Temperature"
+      // dayMode
+      />
+      <h1 className="text-slate-300 mt-4 mb-2 text-2xl">
+        {data[0].humidity.toFixed(2)}%
+      </h1>
+      <div className="flex mb-2">
+        <button
+          onClick={() => setHumidityPrecision(1440)}
+          className={`border py-1 w-12 ${humidityPrecision === 1440 ? "font-bold" : ""
+            }`}
+        >
+          24h
+        </button>
+        <button
+          onClick={() => setHumidityPrecision(60)}
+          className={`border py-1 w-12 ${humidityPrecision === 60 ? "font-bold" : ""
+            }`}
+        >
+          1h
+        </button>
+        <button
+          onClick={() => setHumidityPrecision(10)}
+          className={`border py-1 w-12 ${humidityPrecision === 10 ? "font-bold" : ""
+            }`}
+        >
+          10m
+        </button>
+        <button
+          onClick={() => setHumbarMode(!humbarMode)}
+          className={`border py-1 w-12`}
+        >
+          {tempBarMode ? "Line" : "Bar"}
+        </button>
+      </div>
+      <Graph
+        mode={humbarMode}
+        dataset={data}
+        scale={"time"}
+        precision={humidityPrecision}
+        valueName="humidity"
+        colorRgb="51, 153, 255"
+      // dayMode
+      />
+      {cum_data.length==0 && (
+        <>
+          <Graph
+            mode={humbarMode}
+            dataset={cum_data}
+            scale={"time"}
+            precision={365}
+            valueName="humidity"
+            colorRgb="51, 153, 255"
+            labelOverride="Pressure release"
+          // dayMode
+          />
+          <div className="flex mb-2">
+            <button onClick={() => addCum()} className={`border py-1 w-12`}>
+              Add
+            </button>
+          </div>
+        </>
+      )}
+      {dataValidator(500)}
     </div>
   );
 }
 export const getServerSideProps = async () => {
-  // const temp = await fetch(process.env.HOST + "/api/temperature");
-  // const hum = await fetch(process.env.HOST + "/api/humidity");
-  // const smok = await fetch(process.env.HOST + "/api/smoke");
-  // const eja = await fetch(process.env.HOST + "/api/ejaculation");
-  // const main = await getValue("main", "test");
-
-  // const temperature = await temp.json();
-  // const humidity = await hum.json();
-  // const smoke = await smok.json();
-  // const ejaculation = await eja.json();
-
-  // if (!temp.ok || !hum.ok || !smok.ok || !eja.ok) {
-  //   // This will activate the closest `error.js` Error Boundary
-  //   throw new Error("Failed to fetch data");
-  // }
 
   const url = process.env.HOST + "/n/1440";
   // Create headers object with the custom header
