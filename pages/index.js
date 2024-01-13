@@ -1,13 +1,13 @@
 import Image from "next/image";
 import Graph from "../components/chart";
-import { format, formatDistance, subDays, subMinutes } from "date-fns";
+import { addDays, format, formatDistance, subDays, subMinutes } from "date-fns";
 import { addValue, getValue, setValue } from "@/config/firebase";
 import { useEffect, useState } from "react";
 import { AiFillCloseCircle } from "react-icons/ai";
 import CardChart from "@/components/card-chart";
 import { ta } from "date-fns/locale";
 
-export default function Home({ data, aggregated_data }) {
+export default function Home({ data, aggregated_data, cum_data }) {
   const [activeCard, setActiveCard] = useState(false);
   // const [gridState, setGridState] = useState("grid-cols-1 grid-rows-2");
   const [mode, setMode] = useState("line");
@@ -15,12 +15,11 @@ export default function Home({ data, aggregated_data }) {
   const [humidityPrecision, setHumidityPrecision] = useState(60);
   const [tempBarMode, setTempBarMode] = useState(false);
   const [humbarMode, setHumbarMode] = useState(false);
-  const [hActive, setHActive] = useState(true);
   // const [jActive, setJActive] = useState(false);
   // const [eActive, setEActive] = useState(false);
-// console.log(data)
+  // console.log(data)
   const [timer, setTimer] = useState(60);
-console.log(aggregated_data)
+  console.log(aggregated_data);
   useEffect(() => {
     const intervalId = setInterval(() => {
       // Reload the current page
@@ -28,22 +27,25 @@ console.log(aggregated_data)
     }, 60000);
 
     const counterInterval = setInterval(() => {
-      setTimer(prevTimer => prevTimer - 1);
+      setTimer((prevTimer) => prevTimer - 1);
     }, 1000);
 
-    setTemperaturePrecision(parseInt(localStorage.getItem('temperaturePrecision')) || 60)
-    setHumidityPrecision(parseInt(localStorage.getItem('humidityPrecision')) || 60)
+    setTemperaturePrecision(
+      parseInt(localStorage.getItem("temperaturePrecision")) || 60
+    );
+    setHumidityPrecision(
+      parseInt(localStorage.getItem("humidityPrecision")) || 60
+    );
 
     // Cleanup the interval when the component unmounts
     return () => clearInterval(intervalId);
   }, []); // Empty dependency array ensures the effect runs only once on mount
 
-
   useEffect(() => {
-    console.log(temperaturePrecision, humidityPrecision)
-    localStorage.setItem('temperaturePrecision', temperaturePrecision)
-    localStorage.setItem('humidityPrecision', humidityPrecision)
-  }, [temperaturePrecision, humidityPrecision])
+    console.log(temperaturePrecision, humidityPrecision);
+    localStorage.setItem("temperaturePrecision", temperaturePrecision);
+    localStorage.setItem("humidityPrecision", humidityPrecision);
+  }, [temperaturePrecision, humidityPrecision]);
 
   const focusHandler = (card, action, e) => {
     // console.log(card, action);
@@ -86,6 +88,11 @@ console.log(aggregated_data)
   //   }
   // })
 
+  const addCum = async () => {
+    await fetch(process.env.NEXT_PUBLIC_HOST + "/updateEjaculationCount");
+    window.location.reload();
+  };
+
   return (
     <div
       className={`h-screen pb-24 flex flex-col items-center bg-slate-950 text-slate-300`}
@@ -124,7 +131,7 @@ console.log(aggregated_data)
           onClick={() => setTempBarMode(!tempBarMode)}
           className={`border py-1 w-12`}
         >
-          {tempBarMode ? 'Line' : 'Bar'}
+          {tempBarMode ? "Line" : "Bar"}
         </button>
       </div>
       <Graph
@@ -143,6 +150,7 @@ console.log(aggregated_data)
         scale={"time"}
         valueName="temperature"
         colorRgb="255, 99, 132"
+        labelOverride="Aggregated Temperature"
         // dayMode
       />
       <h1 className="text-slate-300 mt-4 mb-2 text-2xl">
@@ -177,7 +185,7 @@ console.log(aggregated_data)
           onClick={() => setHumbarMode(!humbarMode)}
           className={`border py-1 w-12`}
         >
-          {tempBarMode ? 'Line' : 'Bar'}
+          {tempBarMode ? "Line" : "Bar"}
         </button>
       </div>
       <Graph
@@ -189,8 +197,43 @@ console.log(aggregated_data)
         colorRgb="51, 153, 255"
         // dayMode
       />
+      {!!cum_data.length && (
+        <>
+          <Graph
+            mode={humbarMode}
+            dataset={cum_data}
+            scale={"time"}
+            precision={365}
+            valueName="humidity"
+            colorRgb="51, 153, 255"
+            labelOverride="Pressure release"
+            // dayMode
+          />
+          <div className="flex mb-2">
+            <button onClick={() => addCum()} className={`border py-1 w-12`}>
+              Add
+            </button>
+          </div>
+        </>
+      )}
       <div className="flex flex-col w-11/12 mt-4">
-        <p>Stack size: <span className={data.length >= 1440 ? 'text-green-500' : data.length >= 60 ? 'text-yellow-500' : 'text-red-500'}>{data.length} {data.length < 1440 ? '(' + (data.length / 1440 * 100).toFixed(0) + '%)' : ''}</span></p>
+        <p>
+          Stack size:{" "}
+          <span
+            className={
+              data.length >= 1440
+                ? "text-green-500"
+                : data.length >= 60
+                ? "text-yellow-500"
+                : "text-red-500"
+            }
+          >
+            {data.length}{" "}
+            {data.length < 1440
+              ? "(" + ((data.length / 1440) * 100).toFixed(0) + "%)"
+              : ""}
+          </span>
+        </p>
         <p>
           Latest datapoint:{" "}
           <span
@@ -237,12 +280,11 @@ export const getServerSideProps = async () => {
   });
   const data = await res.json();
 
-  const dataPoints = data.data.filter(entry => new Date(entry.timestamp).getTime() > subDays(new Date(), 1))
-  console.log(dataPoints)
+  const dataPoints = data.data.filter(
+    (entry) => new Date(entry.timestamp).getTime() > subDays(new Date(), 1)
+  );
 
   const agg_url = process.env.HOST + "/aggregated/all";
-  
-  
 
   // Fetch with custom headers
   const agg_res = await fetch(agg_url, {
@@ -251,10 +293,32 @@ export const getServerSideProps = async () => {
   });
   const agg_data = await agg_res.json();
 
+  const cum_url = process.env.HOST + "/allEjaculationData";
+
+  // Fetch with custom headers
+  const cum_res = await fetch(cum_url, {
+    method: "GET", // or 'POST' or other HTTP methods
+    headers: headers,
+  });
+  const cum_data = await cum_res.json();
+  console.log(cum_data);
+
+  // const interpolated_data = []
+  // cum_data.data.forEach(entry => {
+  //   const date = new Date(entry.date)
+  //   const nextDate = addDays(date, 1)
+  //   console.log(nextDate)
+  //   console.log(format(nextDate, 'yyyy-MM-dd'))
+  //   const result = cum_data.data.find(x => x.date === nextDate)
+  //   if(result) return
+
+  // })
+
   return {
     props: {
       data: dataPoints,
-      aggregated_data: agg_data.data
+      aggregated_data: agg_data.data,
+      cum_data: cum_data.data,
       // temperature,
       // humidity,
       // smoke,

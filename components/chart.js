@@ -24,7 +24,8 @@ export default function Graph({
   scale,
   disabled,
   dayMode,
-  precision
+  precision,
+  labelOverride
 }) {
   // console.log(scale)
   if (disabled) return "Data Source Offline";
@@ -100,7 +101,7 @@ export default function Graph({
     labels,
     datasets: [
       {
-        label: valueName.charAt(0).toUpperCase() + valueName.slice(1),
+        label: labelOverride || valueName.charAt(0).toUpperCase() + valueName.slice(1),
         data: temps,
         fill: true,
         borderWidth: 1.5,
