@@ -112,7 +112,7 @@ export default function Graph({
 
   return (
     <div className="h-4/5 w-11/12 flex justify-center">
-      {mode === "line" ? (
+      {!mode ? (
         <Line options={options} data={data} />
       ) : (
         <Bar options={options} data={data} />

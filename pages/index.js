@@ -13,6 +13,8 @@ export default function Home({ data }) {
   const [mode, setMode] = useState("line");
   const [temperaturePrecision, setTemperaturePrecision] = useState(60);
   const [humidityPrecision, setHumidityPrecision] = useState(60);
+  const [tempBarMode, setTempBarMode] = useState(false);
+  const [humbarMode, setHumbarMode] = useState(false);
   const [hActive, setHActive] = useState(true);
   // const [jActive, setJActive] = useState(false);
   // const [eActive, setEActive] = useState(false);
@@ -118,9 +120,15 @@ export default function Home({ data }) {
         >
           10m
         </button>
+        <button
+          onClick={() => setTempBarMode(!tempBarMode)}
+          className={`border py-1 w-12`}
+        >
+          {tempBarMode ? 'Line' : 'Bar'}
+        </button>
       </div>
       <Graph
-        mode={mode}
+        mode={tempBarMode}
         dataset={data}
         precision={temperaturePrecision}
         scale={"time"}
@@ -156,9 +164,15 @@ export default function Home({ data }) {
         >
           10m
         </button>
+        <button
+          onClick={() => setHumbarMode(!humbarMode)}
+          className={`border py-1 w-12`}
+        >
+          {tempBarMode ? 'Line' : 'Bar'}
+        </button>
       </div>
       <Graph
-        mode={mode}
+        mode={humbarMode}
         dataset={data}
         scale={"time"}
         precision={humidityPrecision}
@@ -214,11 +228,12 @@ export const getServerSideProps = async () => {
   });
   const data = await res.json();
 
-  // const dataPoints = data.data.filter(entry => new Date(entry.timestamp).getTime() < subDays(new Date(), 1))
+  const dataPoints = data.data.filter(entry => new Date(entry.timestamp).getTime() > subDays(new Date(), 1))
+  console.log(dataPoints)
 
   return {
     props: {
-      data: data.data,
+      data: dataPoints,
       // temperature,
       // humidity,
       // smoke,
