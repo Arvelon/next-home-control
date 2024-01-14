@@ -143,7 +143,7 @@ export default function Home({ data, aggregated_data, cum_data }) {
 
   return (
     <div
-      className={`h-screen pb-24 flex flex-col items-center bg-slate-950 text-slate-300`}
+      className={`pb-24 flex flex-col items-center bg-slate-950 text-slate-300`}
     >
       <div className="absolute right-0 px-2 py-1">{timer}</div>
 
@@ -258,7 +258,7 @@ export default function Home({ data, aggregated_data, cum_data }) {
           </div>
         </>
       )}
-      {dataValidator(500)}
+      {dataValidator(1440)}
     </div>
   );
 }
