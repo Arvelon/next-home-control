@@ -153,11 +153,11 @@ export default function Home({ data, aggregated_data, cum_data }) {
       </h1>
       <div className="flex mb-2">
         <button
-          onClick={() => setTemperaturePrecision(1440)}
-          className={`border py-1 w-12 ${temperaturePrecision === 1440 ? "font-bold" : ""
+          onClick={() => setTemperaturePrecision(120)}
+          className={`border py-1 w-12 ${temperaturePrecision === 120 ? "font-bold" : ""
             }`}
         >
-          24h
+          2h
         </button>
         <button
           onClick={() => setTemperaturePrecision(60)}
@@ -204,11 +204,11 @@ export default function Home({ data, aggregated_data, cum_data }) {
       </h1>
       <div className="flex mb-2">
         <button
-          onClick={() => setHumidityPrecision(1440)}
-          className={`border py-1 w-12 ${humidityPrecision === 1440 ? "font-bold" : ""
+          onClick={() => setHumidityPrecision(120)}
+          className={`border py-1 w-12 ${humidityPrecision === 120 ? "font-bold" : ""
             }`}
         >
-          24h
+          2h
         </button>
         <button
           onClick={() => setHumidityPrecision(60)}
@@ -265,7 +265,7 @@ export default function Home({ data, aggregated_data, cum_data }) {
 }
 export const getServerSideProps = async () => {
 
-  const url = process.env.HOST + "/n/1440";
+  const url = process.env.HOST + "/n/120";
   // Create headers object with the custom header
   const headers = new Headers();
   headers.append("ngrok-skip-browser-warning", "true");
