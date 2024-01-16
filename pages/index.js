@@ -19,7 +19,8 @@ export default function Home({ data, aggregated_data, cum_data }) {
   // const [eActive, setEActive] = useState(false);
   // console.log(data)
   const [timer, setTimer] = useState(60);
-  console.log(aggregated_data);
+  // console.log(data);
+  console.log(cum_data)
   useEffect(() => {
     const intervalId = setInterval(() => {
       // Reload the current page
@@ -239,7 +240,7 @@ export default function Home({ data, aggregated_data, cum_data }) {
         colorRgb="51, 153, 255"
       // dayMode
       />
-      {cum_data.length==0 && (
+      {cum_data.length > 0 && (
         <>
           <Graph
             mode={humbarMode}
