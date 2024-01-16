@@ -20,7 +20,6 @@ export default function Home({ data, aggregated_data, cum_data }) {
   // console.log(data)
   const [timer, setTimer] = useState(60);
   // console.log(data);
-  console.log(cum_data)
   useEffect(() => {
     const intervalId = setInterval(() => {
       // Reload the current page
@@ -37,6 +36,8 @@ export default function Home({ data, aggregated_data, cum_data }) {
     setHumidityPrecision(
       parseInt(localStorage.getItem("humidityPrecision")) || 60
     );
+
+      console.log(data, cum_data)
 
     // Cleanup the interval when the component unmounts
     return () => clearInterval(intervalId);
@@ -90,7 +91,9 @@ export default function Home({ data, aggregated_data, cum_data }) {
   // })
 
   const addCum = async () => {
-    await fetch(process.env.NEXT_PUBLIC_HOST + "/updateEjaculationCount");
+    const res = await fetch(process.env.NEXT_PUBLIC_HOST + "/updateEjaculationCount");
+    const json = await res.json()
+    console.log(json);
     window.location.reload();
   };
 
@@ -120,7 +123,7 @@ export default function Home({ data, aggregated_data, cum_data }) {
             }
           >
             {data.length}{" "}
-            {data.length < 1440
+            {data.length < fullStack
               ? "(" + ((data.length / 1440) * 100).toFixed(0) + "%)"
               : ""}
           </span>
@@ -242,24 +245,25 @@ export default function Home({ data, aggregated_data, cum_data }) {
       />
       {cum_data.length > 0 && (
         <>
+        <div className="flex mb-2">
+            <button onClick={() => addCum()} className={`border py-1 w-12`}>
+              Add
+            </button>
+          </div>
           <Graph
             mode={humbarMode}
             dataset={cum_data}
             scale={"time"}
             precision={365}
-            valueName="humidity"
+            valueName="count"
             colorRgb="51, 153, 255"
             labelOverride="Pressure release"
           // dayMode
           />
-          <div className="flex mb-2">
-            <button onClick={() => addCum()} className={`border py-1 w-12`}>
-              Add
-            </button>
-          </div>
+
         </>
       )}
-      {dataValidator(1440)}
+      {dataValidator(120)}
     </div>
   );
 }
@@ -298,7 +302,6 @@ export const getServerSideProps = async () => {
     headers: headers,
   });
   const cum_data = await cum_res.json();
-  console.log(cum_data);
 
   // const interpolated_data = []
   // cum_data.data.forEach(entry => {
