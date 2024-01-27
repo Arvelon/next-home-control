@@ -7,7 +7,7 @@ import { AiFillCloseCircle } from "react-icons/ai";
 import CardChart from "@/components/card-chart";
 import { ta } from "date-fns/locale";
 
-export default function Home({ data, aggregated_data, cum_data }) {
+export default function Home({ sensor1, sensor2, aggregated_data, cum_data }) {
   const [activeCard, setActiveCard] = useState(false);
   // const [gridState, setGridState] = useState("grid-cols-1 grid-rows-2");
   const [mode, setMode] = useState("line");
@@ -37,7 +37,7 @@ export default function Home({ data, aggregated_data, cum_data }) {
       parseInt(localStorage.getItem("humidityPrecision")) || 60
     );
 
-      console.log(data, cum_data)
+    console.log(sensor1, cum_data);
 
     // Cleanup the interval when the component unmounts
     return () => clearInterval(intervalId);
@@ -91,22 +91,23 @@ export default function Home({ data, aggregated_data, cum_data }) {
   // })
 
   const addCum = async () => {
-    const res = await fetch(process.env.NEXT_PUBLIC_HOST + "/updateEjaculationCount");
-    const json = await res.json()
+    const res = await fetch(
+      process.env.NEXT_PUBLIC_HOST + "/updateEjaculationCount"
+    );
+    const json = await res.json();
     console.log(json);
     window.location.reload();
   };
 
   const dataValidator = (fullStack) => {
-
     // These conditions have overlap, but they are executet in the right order so there is no issue
-    const green = data.length == fullStack
+    const green = sensor1.length == fullStack;
 
-    const yellow = data.length < (fullStack / 4 * 3) || data.length < fullStack // > 75% && !green
+    const yellow = sensor1.length < (fullStack / 4) * 3 || sensor1.length < fullStack; // > 75% && !green
 
-    const red = data.length < (fullStack / 4 * 3)
+    const red = sensor1.length < (fullStack / 4) * 3;
 
-    const cyan = data.length > fullStack * 1.2
+    const cyan = sensor1.length > fullStack * 1.2;
 
     return (
       <div className="flex flex-col w-11/12 mt-4">
@@ -114,17 +115,18 @@ export default function Home({ data, aggregated_data, cum_data }) {
           Stack size:{" "}
           <span
             className={
-              cyan ? "text-cyan-500" :
-                green
-                  ? "text-green-500"
-                  : red
-                    ? "text-red-500"
-                    : "text-yellow-500"
+              cyan
+                ? "text-cyan-500"
+                : green
+                ? "text-green-500"
+                : red
+                ? "text-red-500"
+                : "text-yellow-500"
             }
           >
-            {data.length}{" "}
-            {data.length < fullStack
-              ? "(" + ((data.length / 1440) * 100).toFixed(0) + "%)"
+            {sensor1.length}{" "}
+            {sensor1.length < fullStack
+              ? "(" + ((sensor1.length / 1440) * 100).toFixed(0) + "%)"
               : ""}
           </span>
         </p>
@@ -132,18 +134,18 @@ export default function Home({ data, aggregated_data, cum_data }) {
           Latest datapoint:{" "}
           <span
             className={
-              new Date(data[0].timestamp) < subMinutes(new Date(), 2)
+              new Date(sensor1[0].timestamp) < subMinutes(new Date(), 2)
                 ? "text-red-500"
                 : "text-green-500"
             }
           >
-            {data[0].timestamp}
+            {sensor1[0].timestamp}
           </span>
         </p>
-        <p>Oldest datapoint: {data[data.length - 1].timestamp}</p>
+        <p>Oldest datapoint: {sensor1[sensor1.length - 1].timestamp}</p>
       </div>
-    )
-  }
+    );
+  };
 
   return (
     <div
@@ -152,27 +154,30 @@ export default function Home({ data, aggregated_data, cum_data }) {
       <div className="absolute right-0 px-2 py-1">{timer}</div>
 
       <h1 className="text-slate-300 mt-4 mb-2 text-2xl">
-        {data[0].temperature.toFixed(2)}°C
+        Sensor 1 {sensor1[0].temperature.toFixed(2)}°C
       </h1>
       <div className="flex mb-2">
         <button
           onClick={() => setTemperaturePrecision(120)}
-          className={`border py-1 w-12 ${temperaturePrecision === 120 ? "font-bold" : ""
-            }`}
+          className={`border py-1 w-12 ${
+            temperaturePrecision === 120 ? "font-bold" : ""
+          }`}
         >
           2h
         </button>
         <button
           onClick={() => setTemperaturePrecision(60)}
-          className={`border py-1 w-12 ${temperaturePrecision === 60 ? "font-bold" : ""
-            }`}
+          className={`border py-1 w-12 ${
+            temperaturePrecision === 60 ? "font-bold" : ""
+          }`}
         >
           1h
         </button>
         <button
           onClick={() => setTemperaturePrecision(10)}
-          className={`border py-1 w-12 ${temperaturePrecision === 10 ? "font-bold" : ""
-            }`}
+          className={`border py-1 w-12 ${
+            temperaturePrecision === 10 ? "font-bold" : ""
+          }`}
         >
           10m
         </button>
@@ -185,12 +190,12 @@ export default function Home({ data, aggregated_data, cum_data }) {
       </div>
       <Graph
         mode={tempBarMode}
-        dataset={data}
+        dataset={sensor1}
         precision={temperaturePrecision}
         scale={"time"}
         valueName="temperature"
         colorRgb="255, 99, 132"
-      // dayMode
+        // dayMode
       />
       <Graph
         mode={tempBarMode}
@@ -200,30 +205,45 @@ export default function Home({ data, aggregated_data, cum_data }) {
         valueName="temperature"
         colorRgb="255, 99, 132"
         labelOverride="Aggregated Temperature"
-      // dayMode
+        // dayMode
       />
       <h1 className="text-slate-300 mt-4 mb-2 text-2xl">
-        {data[0].humidity.toFixed(2)}%
+        Sensor 2 {sensor2[0].temperature.toFixed(2)}°C
+      </h1>
+      <Graph
+      mode={tempBarMode}
+      dataset={sensor2}
+      precision={temperaturePrecision}
+      scale={"time"}
+      valueName="temperature"
+      colorRgb="255, 99, 132"
+      // dayMode
+    />
+      <h1 className="text-slate-300 mt-4 mb-2 text-2xl">
+        {sensor1[0].humidity.toFixed(2)}%
       </h1>
       <div className="flex mb-2">
         <button
           onClick={() => setHumidityPrecision(120)}
-          className={`border py-1 w-12 ${humidityPrecision === 120 ? "font-bold" : ""
-            }`}
+          className={`border py-1 w-12 ${
+            humidityPrecision === 120 ? "font-bold" : ""
+          }`}
         >
           2h
         </button>
         <button
           onClick={() => setHumidityPrecision(60)}
-          className={`border py-1 w-12 ${humidityPrecision === 60 ? "font-bold" : ""
-            }`}
+          className={`border py-1 w-12 ${
+            humidityPrecision === 60 ? "font-bold" : ""
+          }`}
         >
           1h
         </button>
         <button
           onClick={() => setHumidityPrecision(10)}
-          className={`border py-1 w-12 ${humidityPrecision === 10 ? "font-bold" : ""
-            }`}
+          className={`border py-1 w-12 ${
+            humidityPrecision === 10 ? "font-bold" : ""
+          }`}
         >
           10m
         </button>
@@ -236,16 +256,16 @@ export default function Home({ data, aggregated_data, cum_data }) {
       </div>
       <Graph
         mode={humbarMode}
-        dataset={data}
+        dataset={sensor1}
         scale={"time"}
         precision={humidityPrecision}
         valueName="humidity"
         colorRgb="51, 153, 255"
-      // dayMode
+        // dayMode
       />
       {cum_data.length > 0 && (
         <>
-        <div className="flex mb-2">
+          <div className="flex mb-2">
             <button onClick={() => addCum()} className={`border py-1 w-12`}>
               Add
             </button>
@@ -258,9 +278,8 @@ export default function Home({ data, aggregated_data, cum_data }) {
             valueName="count"
             colorRgb="51, 153, 255"
             labelOverride="Pressure release"
-          // dayMode
+            // dayMode
           />
-
         </>
       )}
       {dataValidator(120)}
@@ -268,7 +287,6 @@ export default function Home({ data, aggregated_data, cum_data }) {
   );
 }
 export const getServerSideProps = async () => {
-
   const url = process.env.HOST + "/n/120";
   // Create headers object with the custom header
   const headers = new Headers();
@@ -281,9 +299,9 @@ export const getServerSideProps = async () => {
   });
   const data = await res.json();
 
-  const dataPoints = data.data.filter(
-    (entry) => new Date(entry.timestamp).getTime() > subDays(new Date(), 1)
-  );
+  // const dataPoints = data.data.filter(
+  //   (entry) => new Date(entry.timestamp).getTime() > subDays(new Date(), 1)
+  // );
 
   const agg_url = process.env.HOST + "/aggregated/all";
 
@@ -316,7 +334,8 @@ export const getServerSideProps = async () => {
 
   return {
     props: {
-      data: dataPoints,
+      sensor1: data.data.sensor1,
+      sensor2: data.data.sensor2,
       aggregated_data: agg_data.data,
       cum_data: cum_data.data,
       // temperature,
