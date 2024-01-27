@@ -8,6 +8,8 @@ import CardChart from "@/components/card-chart";
 import { ta } from "date-fns/locale";
 
 export default function Home({ sensor1, sensor2, aggregated_data, cum_data }) {
+  console.log('sensor2', sensor2)
+  console.log('sensor1', sensor1)
   const [activeCard, setActiveCard] = useState(false);
   // const [gridState, setGridState] = useState("grid-cols-1 grid-rows-2");
   const [mode, setMode] = useState("line");
@@ -44,7 +46,7 @@ export default function Home({ sensor1, sensor2, aggregated_data, cum_data }) {
   }, []); // Empty dependency array ensures the effect runs only once on mount
 
   useEffect(() => {
-    console.log(temperaturePrecision, humidityPrecision);
+    // console.log(temperaturePrecision, humidityPrecision);
     localStorage.setItem("temperaturePrecision", temperaturePrecision);
     localStorage.setItem("humidityPrecision", humidityPrecision);
   }, [temperaturePrecision, humidityPrecision]);
