@@ -30,7 +30,7 @@ export default function Graph({
   // console.log(scale)
   if (disabled) return "Data Source Offline";
   const originalData = dataset
-  // console.log(dataset);
+  console.log(valueName, dataset);
   ChartJS.register(
     CategoryScale,
     TimeScale,
@@ -41,14 +41,12 @@ export default function Graph({
     Tooltip,
     Legend
   );
-console.log(valueName, dataset);
   const temparr =
     scale == "date"
       ? Object.values(dataset)
       : dataset.slice(0, precision).map((entry) => parseFloat(entry[valueName]));
   const min = Math.min(...temparr);
   const max = Math.max(...temparr);
-  console.log(dataset)
   const options = {
     responsive: true,
     maintainAspectRatio: false,
@@ -82,7 +80,6 @@ console.log(valueName, dataset);
     },
   };
   //
-  console.log(valueName, dataset);
 
   const labels =
     scale == "date"
@@ -97,7 +94,6 @@ console.log(valueName, dataset);
   // console.log(temps);
 
   // const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
-console.log('zzzz', new Date('Mon Jan 15 2024 01:00:00 GMT+0100 (Central European Standard Time)'))
   const data = {
     labels: valueName === "count" ? originalData.map(d => new Date(d.date)) : labels,
     datasets: [
@@ -111,7 +107,6 @@ console.log('zzzz', new Date('Mon Jan 15 2024 01:00:00 GMT+0100 (Central Europea
       },
     ],
   };
-  console.log(valueName, data);
 
   return (
     <div className="h-4/5 w-11/12 flex justify-center">

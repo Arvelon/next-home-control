@@ -7,16 +7,10 @@ const dataFilePath = path.join(process.cwd(), "db/data.json");
 
 export default async function handler(req, res) {
   console.log("GET /ejaculation");
-  const data = await getAll("ejaculation_log");
+  
   // console.log(data);
 
-  const groupByCategory = data.reduce((group, entry) => {
-    const { timestamp } = entry;
-    const ts = format(new Date(timestamp), "MM-dd-yyyy");
-    group[ts] = group[ts] ?? 0;
-    group[ts] += 1;
-    return group;
-  }, {});
+  const resp = await fetch(process.env.HOST + "/updateEjaculationCount")
 
   // console.log(groupByCategory);
 
@@ -24,5 +18,5 @@ export default async function handler(req, res) {
   //   console.log(format(new Date(), "dd-MM-yyyy"))
   //   console.log(new Date())
 
-  res.status(200).json(groupByCategory);
+  res.status(200).json(await resp.json());
 }

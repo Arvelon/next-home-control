@@ -8,8 +8,10 @@ import CardChart from "@/components/card-chart";
 import { ta } from "date-fns/locale";
 
 export default function Home({ sensor1, sensor2, aggregated_data, cum_data }) {
-  console.log('sensor2', sensor2)
-  console.log('sensor1', sensor1)
+  // console.log('sensor2', sensor2)
+  // console.log('aggregated', aggregated_data)
+  // console.log('c', cum_data)
+  // console.log('sensor1', sensor1)
   const [activeCard, setActiveCard] = useState(false);
   // const [gridState, setGridState] = useState("grid-cols-1 grid-rows-2");
   const [mode, setMode] = useState("line");
@@ -94,7 +96,7 @@ export default function Home({ sensor1, sensor2, aggregated_data, cum_data }) {
 
   const addCum = async () => {
     const res = await fetch(
-      process.env.NEXT_PUBLIC_HOST + "/updateEjaculationCount"
+      "api/ejaculation"
     );
     const json = await res.json();
     console.log(json);
@@ -280,7 +282,7 @@ export default function Home({ sensor1, sensor2, aggregated_data, cum_data }) {
             valueName="count"
             colorRgb="51, 153, 255"
             labelOverride="Pressure release"
-            // dayMode
+            dayMode
           />
         </>
       )}
