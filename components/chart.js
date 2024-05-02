@@ -27,10 +27,8 @@ export default function Graph({
   precision,
   labelOverride
 }) {
-  // console.log(scale)
   if (disabled) return "Data Source Offline";
   const originalData = dataset
-  console.log(valueName, dataset);
   ChartJS.register(
     CategoryScale,
     TimeScale,
@@ -85,15 +83,12 @@ export default function Graph({
     scale == "date"
       ? Object.keys(dataset.slice(0, precision)).map((ts) => new Date(ts))
       : dataset.slice(0, precision).map((i, key) => new Date(i.timestamp));
-  // console.log(labels);
 
   const temps =
     scale == "date"
       ? Object.values(dataset.slice(0, precision))
       : dataset.slice(0, precision).map((i, key) => parseFloat(i[valueName]));
-  // console.log(temps);
 
-  // const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
   const data = {
     labels: valueName === "count" ? originalData.map(d => new Date(d.date)) : labels,
     datasets: [

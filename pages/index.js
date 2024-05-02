@@ -12,18 +12,15 @@ export default function Home({ sensor1, sensor2, aggregated_data, cum_data }) {
   // console.log('aggregated', aggregated_data)
   // console.log('c', cum_data)
   // console.log('sensor1', sensor1)
+
   const [activeCard, setActiveCard] = useState(false);
-  // const [gridState, setGridState] = useState("grid-cols-1 grid-rows-2");
   const [mode, setMode] = useState("line");
   const [temperaturePrecision, setTemperaturePrecision] = useState(60);
   const [humidityPrecision, setHumidityPrecision] = useState(60);
   const [tempBarMode, setTempBarMode] = useState(false);
   const [humbarMode, setHumbarMode] = useState(false);
-  // const [jActive, setJActive] = useState(false);
-  // const [eActive, setEActive] = useState(false);
-  // console.log(data)
   const [timer, setTimer] = useState(60);
-  // console.log(data);
+
   useEffect(() => {
     const intervalId = setInterval(() => {
       // Reload the current page
@@ -40,8 +37,6 @@ export default function Home({ sensor1, sensor2, aggregated_data, cum_data }) {
     setHumidityPrecision(
       parseInt(localStorage.getItem("humidityPrecision")) || 60
     );
-
-    console.log(sensor1, cum_data);
 
     // Cleanup the interval when the component unmounts
     return () => clearInterval(intervalId);
@@ -95,9 +90,7 @@ export default function Home({ sensor1, sensor2, aggregated_data, cum_data }) {
   // })
 
   const addCum = async () => {
-    const res = await fetch(
-      "api/ejaculation"
-    );
+    const res = await fetch("api/ejaculation");
     const json = await res.json();
     console.log(json);
     window.location.reload();
@@ -107,7 +100,8 @@ export default function Home({ sensor1, sensor2, aggregated_data, cum_data }) {
     // These conditions have overlap, but they are executet in the right order so there is no issue
     const green = sensor1.length == fullStack;
 
-    const yellow = sensor1.length < (fullStack / 4) * 3 || sensor1.length < fullStack; // > 75% && !green
+    const yellow =
+      sensor1.length < (fullStack / 4) * 3 || sensor1.length < fullStack; // > 75% && !green
 
     const red = sensor1.length < (fullStack / 4) * 3;
 
@@ -215,14 +209,14 @@ export default function Home({ sensor1, sensor2, aggregated_data, cum_data }) {
         Sensor 2 {sensor2[0].temperature.toFixed(2)}°C
       </h1>
       <Graph
-      mode={tempBarMode}
-      dataset={sensor2}
-      precision={temperaturePrecision}
-      scale={"time"}
-      valueName="temperature"
-      colorRgb="255, 99, 132"
-      // dayMode
-    />
+        mode={tempBarMode}
+        dataset={sensor2}
+        precision={temperaturePrecision}
+        scale={"time"}
+        valueName="temperature"
+        colorRgb="255, 99, 132"
+        // dayMode
+      />
       <h1 className="text-slate-300 mt-4 mb-2 text-2xl">
         {sensor1[0].humidity.toFixed(2)}%
       </h1>
