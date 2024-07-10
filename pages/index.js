@@ -7,7 +7,7 @@ import { AiFillCloseCircle } from "react-icons/ai";
 import CardChart from "@/components/card-chart";
 import { ta } from "date-fns/locale";
 
-export default function Home({ sensor1, sensor2, aggregated_data, cum_data }) {
+export default function Home({ sensor1, sensor2, sensor3, aggregated_data, cum_data }) {
   // console.log('sensor2', sensor2)
   // console.log('aggregated', aggregated_data)
   // console.log('c', cum_data)
@@ -151,8 +151,10 @@ export default function Home({ sensor1, sensor2, aggregated_data, cum_data }) {
     >
       <div className="absolute right-0 px-2 py-1">{timer}</div>
 
+      <h1 className="text-slate-300 mt-4 mb-2 text-3xl">Temperature</h1>
+
       <h1 className="text-slate-300 mt-4 mb-2 text-2xl">
-        Sensor 1 {sensor1[0].temperature.toFixed(2)}°C
+        Sensor 1 (Living room) {sensor1[0].temperature.toFixed(2)}°C
       </h1>
       <div className="flex mb-2">
         <button
@@ -195,6 +197,7 @@ export default function Home({ sensor1, sensor2, aggregated_data, cum_data }) {
         colorRgb="255, 99, 132"
         // dayMode
       />
+      <h1 className="text-slate-300 mt-4 mb-2 text-2xl">Average daily temperature</h1>
       <Graph
         mode={tempBarMode}
         dataset={aggregated_data}
@@ -206,7 +209,7 @@ export default function Home({ sensor1, sensor2, aggregated_data, cum_data }) {
         // dayMode
       />
       <h1 className="text-slate-300 mt-4 mb-2 text-2xl">
-        Sensor 2 {sensor2[0].temperature.toFixed(2)}°C
+        Sensor 2 (Upstairs) {sensor2[0].temperature.toFixed(2)}°C
       </h1>
       <Graph
         mode={tempBarMode}
@@ -218,8 +221,23 @@ export default function Home({ sensor1, sensor2, aggregated_data, cum_data }) {
         // dayMode
       />
       <h1 className="text-slate-300 mt-4 mb-2 text-2xl">
-        {sensor1[0].humidity.toFixed(2)}%
+        Sensor 3 (Outside) {sensor3[0].temperature.toFixed(2)}°C
       </h1>
+      <Graph
+        mode={tempBarMode}
+        dataset={sensor3}
+        precision={temperaturePrecision}
+        scale={"time"}
+        valueName="temperature"
+        colorRgb="255, 99, 132"
+        // dayMode
+      />
+
+<h1 className="text-slate-300 mt-4 mb-2 text-3xl">Humidity</h1>
+
+
+<h1 className="text-slate-300 mt-4 mb-2 text-2xl">
+Sensor 1 (Living room) {sensor1[0].humidity.toFixed(2)}%</h1>
       <div className="flex mb-2">
         <button
           onClick={() => setHumidityPrecision(120)}
@@ -252,6 +270,7 @@ export default function Home({ sensor1, sensor2, aggregated_data, cum_data }) {
           {tempBarMode ? "Line" : "Bar"}
         </button>
       </div>
+      
       <Graph
         mode={humbarMode}
         dataset={sensor1}
@@ -261,7 +280,27 @@ export default function Home({ sensor1, sensor2, aggregated_data, cum_data }) {
         colorRgb="51, 153, 255"
         // dayMode
       />
-      {cum_data.length > 0 && (
+      <h1 className="text-slate-300 mt-4 mb-2 text-2xl">Sensor 2 (Upstairs) {sensor2[0].humidity.toFixed(2)}%</h1>
+      <Graph
+        mode={humbarMode}
+        dataset={sensor2}
+        scale={"time"}
+        precision={humidityPrecision}
+        valueName="humidity"
+        colorRgb="51, 153, 255"
+        // dayMode
+      />
+      <h1 className="text-slate-300 mt-4 mb-2 text-2xl">Sensor 3 (Outside) {sensor3[0].humidity.toFixed(2)}%</h1>
+      <Graph
+        mode={humbarMode}
+        dataset={sensor3}
+        scale={"time"}
+        precision={humidityPrecision}
+        valueName="humidity"
+        colorRgb="51, 153, 255"
+        // dayMode
+      />
+      {/* {cum_data.length > 0 && (
         <>
           <div className="flex mb-2">
             <button onClick={() => addCum()} className={`border py-1 w-12`}>
@@ -279,7 +318,7 @@ export default function Home({ sensor1, sensor2, aggregated_data, cum_data }) {
             dayMode
           />
         </>
-      )}
+      )} */}
       {dataValidator(120)}
     </div>
   );
@@ -334,6 +373,7 @@ export const getServerSideProps = async () => {
     props: {
       sensor1: data.data.sensor1,
       sensor2: data.data.sensor2,
+      sensor3: data.data.sensor3,
       aggregated_data: agg_data.data,
       cum_data: cum_data.data,
       // temperature,
