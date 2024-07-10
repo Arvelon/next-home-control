@@ -1,11 +1,15 @@
 # Use official Node.js LTS (Long Term Support) image
 FROM node:lts-alpine
+WORKDIR /usr/src/app
 
-# Set working directory inside the container
-WORKDIR /app
+# Install git if needed
+RUN apk update && apk add --no-cache git
 
-# Copy package.json and package-lock.json (if available)
-COPY package*.json ./
+# Clone the repository
+RUN git clone https://github.com/Arvelon/next-home-control.git .
+
+# Optionally, you can pull the latest changes on build
+RUN git pull
 
 # Install dependencies
 RUN npm install
