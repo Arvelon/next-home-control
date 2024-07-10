@@ -27,10 +27,8 @@ export default function Graph({
   precision,
   labelOverride
 }) {
-  // console.log(scale)
   if (disabled) return "Data Source Offline";
-
-  // console.log(dataset);
+  const originalData = dataset
   ChartJS.register(
     CategoryScale,
     TimeScale,
@@ -41,7 +39,6 @@ export default function Graph({
     Tooltip,
     Legend
   );
-
   const temparr =
     scale == "date"
       ? Object.values(dataset)
@@ -81,28 +78,23 @@ export default function Graph({
     },
   };
   //
-  // console.log(dataset);
 
   const labels =
     scale == "date"
       ? Object.keys(dataset.slice(0, precision)).map((ts) => new Date(ts))
       : dataset.slice(0, precision).map((i, key) => new Date(i.timestamp));
-  // console.log(labels);
 
   const temps =
     scale == "date"
       ? Object.values(dataset.slice(0, precision))
       : dataset.slice(0, precision).map((i, key) => parseFloat(i[valueName]));
-  // console.log(temps);
-
-  // const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
 
   const data = {
-    labels,
+    labels: valueName === "count" ? originalData.map(d => new Date(d.date)) : labels,
     datasets: [
       {
         label: labelOverride || valueName.charAt(0).toUpperCase() + valueName.slice(1),
-        data: temps,
+        data: valueName === "count" ? originalData.map(d => d.count) : temps,
         fill: true,
         borderWidth: 1.5,
         borderColor: `rgba(${colorRgb || "255, 99, 132"}, 1)`,
