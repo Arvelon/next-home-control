@@ -11,6 +11,7 @@ RUN git clone https://github.com/Arvelon/next-home-control.git .
 # Optionally, you can pull the latest changes on build
 RUN git pull
 
+
 # Install dependencies
 RUN npm install
 
