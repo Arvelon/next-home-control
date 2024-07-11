@@ -328,7 +328,7 @@ export const getServerSideProps = async () => {
   // Create headers object with the custom header
   const headers = new Headers();
   headers.append("ngrok-skip-browser-warning", "true");
-
+console.log(url)
   // Fetch with custom headers
   const res = await fetch(url, {
     method: "GET", // or 'POST' or other HTTP methods
