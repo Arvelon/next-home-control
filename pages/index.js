@@ -149,7 +149,7 @@ export default function Home({ sensor1, sensor2, sensor3, aggregated_data, cum_d
     <div
       className={`pb-24 flex flex-col items-center bg-slate-950 text-slate-300`}
     >
-      <div className="absolute right-0 px-2 py-1">{timer}</div>
+      <div className="absolute right-0 px-2 py-1">v0.0.3 {timer}</div>
 
       <h1 className="text-slate-300 mt-4 mb-2 text-3xl">Temperature</h1>
 
