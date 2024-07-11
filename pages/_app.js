@@ -1,4 +1,7 @@
+import { useEffect } from 'react'
 import './globals.css'
+import { useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/router'
 
 const metadata = {
   title: 'Create Next App',
@@ -6,6 +9,16 @@ const metadata = {
 }
 
 export default function App({ Component, pageProps }) {
+
+  // useEffect(() => {
+  //   const router = useRouter()
+
+  //   const searchParams = useSearchParams()
+ 
+  // const lastDataPoint = searchParams.get('lastDataPoint')
+  // if(!lastDataPoint) router.push('/?lastDataPoint='+new Date().getTime())
+  // }, [])
+
   return (
     <html lang="en" suppressHydrationWarning={true}>
       <body>

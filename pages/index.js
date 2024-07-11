@@ -22,6 +22,7 @@ export default function Home({ sensor1, sensor2, sensor3, aggregated_data, cum_d
   const [timer, setTimer] = useState(60);
 
   useEffect(() => {
+    
     const intervalId = setInterval(() => {
       // Reload the current page
       location.reload();
@@ -46,6 +47,8 @@ export default function Home({ sensor1, sensor2, sensor3, aggregated_data, cum_d
     // console.log(temperaturePrecision, humidityPrecision);
     localStorage.setItem("temperaturePrecision", temperaturePrecision);
     localStorage.setItem("humidityPrecision", humidityPrecision);
+    console.log(window.location.search)
+    if(window.location.search === "/?tp="+temperaturePrecision + "&hp="+humidityPrecision) window.location = "/?tp="+temperaturePrecision + "&hp="+humidityPrecision
   }, [temperaturePrecision, humidityPrecision]);
 
   const focusHandler = (card, action, e) => {
@@ -339,8 +342,14 @@ Sensor 1 (Living room) {sensor1[0].humidity.toFixed(2)}%</h1>
     </div>
   );
 }
-export const getServerSideProps = async () => {
-  const url = process.env.HOST + "/n/1440";
+export const getServerSideProps = async ({query}) => {
+
+  const tp = parseInt(query.tp)
+  const hp = query.hp
+
+  const fetchSince = subMinutes(new Date(), tp).getTime()
+
+  const url = process.env.HOST + "/ago/"+tp;
   // Create headers object with the custom header
   const headers = new Headers();
   headers.append("ngrok-skip-browser-warning", "true");
@@ -384,7 +393,6 @@ console.log(url)
   //   if(result) return
 
   // })
-
   return {
     props: {
       sensor1: data.data.sensor1,
