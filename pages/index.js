@@ -349,14 +349,14 @@ console.log(url)
   });
   const agg_data = await agg_res.json();
 
-  const cum_url = process.env.HOST + "/allEjaculationData";
+  // const cum_url = process.env.HOST + "/allEjaculationData";
 
   // Fetch with custom headers
-  const cum_res = await fetch(cum_url, {
-    method: "GET", // or 'POST' or other HTTP methods
-    headers: headers,
-  });
-  const cum_data = await cum_res.json();
+  // const cum_res = await fetch(cum_url, {
+  //   method: "GET", // or 'POST' or other HTTP methods
+  //   headers: headers,
+  // });
+  // const cum_data = await cum_res.json();
 
   // const interpolated_data = []
   // cum_data.data.forEach(entry => {
@@ -375,7 +375,7 @@ console.log(url)
       sensor2: data.data.sensor2,
       sensor3: data.data.sensor3,
       aggregated_data: agg_data.data,
-      cum_data: cum_data.data,
+      // cum_data: cum_data.data,
       // temperature,
       // humidity,
       // smoke,
