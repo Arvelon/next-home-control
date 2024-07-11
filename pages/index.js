@@ -157,6 +157,14 @@ export default function Home({ sensor1, sensor2, sensor3, aggregated_data, cum_d
         Sensor 1 (Living room) {sensor1[0].temperature.toFixed(2)}°C
       </h1>
       <div className="flex mb-2">
+      <button
+          onClick={() => setTemperaturePrecision(1440)}
+          className={`border py-1 w-12 ${
+            temperaturePrecision === 1440 ? "font-bold" : ""
+          }`}
+        >
+          24h
+        </button>
         <button
           onClick={() => setTemperaturePrecision(120)}
           className={`border py-1 w-12 ${
@@ -239,6 +247,14 @@ export default function Home({ sensor1, sensor2, sensor3, aggregated_data, cum_d
 <h1 className="text-slate-300 mt-4 mb-2 text-2xl">
 Sensor 1 (Living room) {sensor1[0].humidity.toFixed(2)}%</h1>
       <div className="flex mb-2">
+      <button
+          onClick={() => setHumidityPrecision(1440)}
+          className={`border py-1 w-12 ${
+            humidityPrecision === 1440 ? "font-bold" : ""
+          }`}
+        >
+          24h
+        </button>
         <button
           onClick={() => setHumidityPrecision(120)}
           className={`border py-1 w-12 ${
@@ -324,7 +340,7 @@ Sensor 1 (Living room) {sensor1[0].humidity.toFixed(2)}%</h1>
   );
 }
 export const getServerSideProps = async () => {
-  const url = process.env.HOST + "/n/120";
+  const url = process.env.HOST + "/n/1440";
   // Create headers object with the custom header
   const headers = new Headers();
   headers.append("ngrok-skip-browser-warning", "true");

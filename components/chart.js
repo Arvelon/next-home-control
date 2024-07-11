@@ -96,6 +96,7 @@ export default function Graph({
         label: labelOverride || valueName.charAt(0).toUpperCase() + valueName.slice(1),
         data: valueName === "count" ? originalData.map(d => d.count) : temps,
         fill: true,
+        pointRadius: 1.5,
         borderWidth: 1.5,
         borderColor: `rgba(${colorRgb || "255, 99, 132"}, 1)`,
         backgroundColor: `rgba(${colorRgb || "255, 99, 132"}, 0.2)`,
