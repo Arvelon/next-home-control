@@ -347,7 +347,7 @@ export const getServerSideProps = async ({query}) => {
   const tp = parseInt(query.tp)
   const hp = query.hp
 
-  const fetchSince = subMinutes(new Date(), tp).getTime()
+  const fetchSince = tp ? subMinutes(new Date(), tp).getTime() : 60
 
   const url = process.env.HOST + "/ago/"+tp;
   // Create headers object with the custom header
@@ -393,6 +393,9 @@ console.log(url)
   //   if(result) return
 
   // })
+
+
+  console.log(data)
   return {
     props: {
       sensor1: data.data.sensor1,
