@@ -3,26 +3,24 @@ import Graph from "../components/chart";
 import { addDays, format, formatDistance, subDays, subMinutes } from "date-fns";
 import { addValue, getValue, setValue } from "@/config/firebase";
 import { useEffect, useState } from "react";
-import { AiFillCloseCircle } from "react-icons/ai";
-import CardChart from "@/components/card-chart";
-import { ta } from "date-fns/locale";
+import { fetchSensors } from "@/services/data-service";
 
-export default function Home({ sensor1, sensor2, sensor3, aggregated_data, cum_data }) {
-  // console.log('sensor2', sensor2)
-  // console.log('aggregated', aggregated_data)
-  // console.log('c', cum_data)
-  // console.log('sensor1', sensor1)
-
+export default function Home() {
   const [activeCard, setActiveCard] = useState(false);
   const [mode, setMode] = useState("line");
-  const [temperaturePrecision, setTemperaturePrecision] = useState(59);
-  const [humidityPrecision, setHumidityPrecision] = useState(60);
+  const [precision, setPrecision] = useState(undefined);
   const [tempBarMode, setTempBarMode] = useState(false);
   const [humbarMode, setHumbarMode] = useState(false);
   const [timer, setTimer] = useState(60);
 
+  // Datasets
+  const [sensor1, setSensor1] = useState(undefined);
+  const [sensor2, setSensor2] = useState(undefined);
+  const [sensor3, setSensor3] = useState(undefined);
+  const [sensor1Aggregated, setSensor1Aggregated] = useState(undefined);
+  // End datasets
+
   useEffect(() => {
-    
     const intervalId = setInterval(() => {
       // Reload the current page
       location.reload();
@@ -32,74 +30,31 @@ export default function Home({ sensor1, sensor2, sensor3, aggregated_data, cum_d
       setTimer((prevTimer) => prevTimer - 1);
     }, 1000);
 
-    setTemperaturePrecision(
-      parseInt(localStorage.getItem("temperaturePrecision")) || 60
-    );
-    setHumidityPrecision(
-      parseInt(localStorage.getItem("humidityPrecision")) || 60
-    );
+    setPrecision(parseInt(localStorage.getItem("precision")) || 60);
 
     // Cleanup the interval when the component unmounts
     return () => clearInterval(intervalId);
   }, []); // Empty dependency array ensures the effect runs only once on mount
 
   useEffect(() => {
-    // console.log(temperaturePrecision, humidityPrecision);
-    localStorage.setItem("temperaturePrecision", temperaturePrecision);
-    localStorage.setItem("humidityPrecision", humidityPrecision);
-    console.log(window.location.search)
-    if(!window.location.search.includes("tp") || (window.location.search !== "?tp="+temperaturePrecision && temperaturePrecision !== 59)) window.location = "/?tp="+temperaturePrecision
-  }, [temperaturePrecision, humidityPrecision]);
+    localStorage.setItem("precision", precision);
 
-  const focusHandler = (card, action, e) => {
-    // console.log(card, action);
-    // console.log(e);
-    // console.log(e.target.id);
-    setActiveCard(
-      e.target.id === "close" || e.target.parentNode.id === "close"
-        ? false
-        : card
-    );
-  };
-
-  // const interval = setInterval(async () => {
-  //   const temp = await fetch(process.env.HOST + "/api/temperature");
-  //   setLiveTemp(await temp.json())
-  // }, 300)
-
-  // const setGrid = async (direction, increase) => {
-  //   const config = await getValue("main", "config");
-  //   console.log(config);
-
-  //   if (increase) {
-  //     config[direction] += 1;
-  //   } else {
-  //     config[direction] -= 1;
-  //   }
-  //   // console.log("r", config);
-  //   const gridString = "grid-rows-" + config.rows + " grid-cols-" + config.cols;
-  //   setGridState(gridString);
-  //   setValue("main", "config", config);
-  //   // console.log(gridString);
-  // };
-  // setGrid('cols', false)
-
-  // useEffect(() => {
-  //   const viewSettings = localStorage.getItem('viewSettings');
-  //   const settings = viewSettings ? JSON.parse(viewSettings) : false;
-  //   if(settings) {
-
-  //   }
-  // })
+    if (precision)
+      fetchSensors(precision).then((res) => {
+        setSensor1(res.data.sensor1);
+        setSensor2(res.data.sensor2);
+        setSensor3(res.data.sensor3);
+      });
+  }, [precision]);
 
   const addCum = async () => {
     const res = await fetch("api/ejaculation");
     const json = await res.json();
-    console.log(json);
     window.location.reload();
   };
 
   const dataValidator = (fullStack) => {
+    if (!sensor1) return;
     // These conditions have overlap, but they are executet in the right order so there is no issue
     const green = sensor1.length == fullStack;
 
@@ -156,39 +111,30 @@ export default function Home({ sensor1, sensor2, sensor3, aggregated_data, cum_d
 
       <h1 className="text-slate-300 mt-4 mb-2 text-3xl">Temperature</h1>
 
-      <h1 className="text-slate-300 mt-4 mb-2 text-2xl">
-        Sensor 1 (Living room) {sensor1[0].temperature.toFixed(2)}°C
-      </h1>
       <div className="flex mb-2">
-      <button
-          onClick={() => setTemperaturePrecision(1440)}
+        <button
+          onClick={() => setPrecision(1440)}
           className={`border py-1 w-12 ${
-            temperaturePrecision === 1440 ? "font-bold" : ""
+            precision === 1440 ? "font-bold" : ""
           }`}
         >
           24h
         </button>
         <button
-          onClick={() => setTemperaturePrecision(120)}
-          className={`border py-1 w-12 ${
-            temperaturePrecision === 120 ? "font-bold" : ""
-          }`}
+          onClick={() => setPrecision(120)}
+          className={`border py-1 w-12 ${precision === 120 ? "font-bold" : ""}`}
         >
           2h
         </button>
         <button
-          onClick={() => setTemperaturePrecision(60)}
-          className={`border py-1 w-12 ${
-            temperaturePrecision === 60 ? "font-bold" : ""
-          }`}
+          onClick={() => setPrecision(60)}
+          className={`border py-1 w-12 ${precision === 60 ? "font-bold" : ""}`}
         >
           1h
         </button>
         <button
-          onClick={() => setTemperaturePrecision(10)}
-          className={`border py-1 w-12 ${
-            temperaturePrecision === 10 ? "font-bold" : ""
-          }`}
+          onClick={() => setPrecision(10)}
+          className={`border py-1 w-12 ${precision === 10 ? "font-bold" : ""}`}
         >
           10m
         </button>
@@ -202,16 +148,15 @@ export default function Home({ sensor1, sensor2, sensor3, aggregated_data, cum_d
       <Graph
         mode={tempBarMode}
         dataset={sensor1}
-        precision={temperaturePrecision}
+        precision={precision}
         scale={"time"}
         valueName="temperature"
         colorRgb="255, 99, 132"
         // dayMode
       />
-      <h1 className="text-slate-300 mt-4 mb-2 text-2xl">Average daily temperature</h1>
       <Graph
         mode={tempBarMode}
-        dataset={aggregated_data}
+        dataset={sensor1Aggregated}
         precision={1000}
         scale={"time"}
         valueName="temperature"
@@ -220,101 +165,65 @@ export default function Home({ sensor1, sensor2, sensor3, aggregated_data, cum_d
         // dayMode
       />
       <h1 className="text-slate-300 mt-4 mb-2 text-2xl">
-        Sensor 2 (Upstairs) {sensor2[0].temperature.toFixed(2)}°C
+        Sensor 2 (Upstairs) {sensor2 && sensor2[0].temperature.toFixed(2)}°C
       </h1>
       <Graph
         mode={tempBarMode}
         dataset={sensor2}
-        precision={temperaturePrecision}
+        precision={precision}
         scale={"time"}
         valueName="temperature"
         colorRgb="255, 99, 132"
         // dayMode
       />
       <h1 className="text-slate-300 mt-4 mb-2 text-2xl">
-        Sensor 3 (Outside) {sensor3[0].temperature.toFixed(2)}°C
+        Sensor 3 (Outside) {sensor3 && sensor3[0].temperature.toFixed(2)}°C
       </h1>
       <Graph
         mode={tempBarMode}
         dataset={sensor3}
-        precision={temperaturePrecision}
+        precision={precision}
         scale={"time"}
         valueName="temperature"
         colorRgb="255, 99, 132"
         // dayMode
       />
 
-<h1 className="text-slate-300 mt-4 mb-2 text-3xl">Humidity</h1>
+      <h1 className="text-slate-300 mt-4 mb-2 text-3xl">Humidity</h1>
 
+      <h1 className="text-slate-300 mt-4 mb-2 text-2xl">
+        Sensor 1 (Living room) {sensor1 && sensor1[0].humidity.toFixed(2)}%
+      </h1>
 
-<h1 className="text-slate-300 mt-4 mb-2 text-2xl">
-Sensor 1 (Living room) {sensor1[0].humidity.toFixed(2)}%</h1>
-      <div className="flex mb-2">
-      <button
-          onClick={() => setHumidityPrecision(1440)}
-          className={`border py-1 w-12 ${
-            humidityPrecision === 1440 ? "font-bold" : ""
-          }`}
-        >
-          24h
-        </button>
-        <button
-          onClick={() => setHumidityPrecision(120)}
-          className={`border py-1 w-12 ${
-            humidityPrecision === 120 ? "font-bold" : ""
-          }`}
-        >
-          2h
-        </button>
-        <button
-          onClick={() => setHumidityPrecision(60)}
-          className={`border py-1 w-12 ${
-            humidityPrecision === 60 ? "font-bold" : ""
-          }`}
-        >
-          1h
-        </button>
-        <button
-          onClick={() => setHumidityPrecision(10)}
-          className={`border py-1 w-12 ${
-            humidityPrecision === 10 ? "font-bold" : ""
-          }`}
-        >
-          10m
-        </button>
-        <button
-          onClick={() => setHumbarMode(!humbarMode)}
-          className={`border py-1 w-12`}
-        >
-          {tempBarMode ? "Line" : "Bar"}
-        </button>
-      </div>
-      
       <Graph
         mode={humbarMode}
         dataset={sensor1}
         scale={"time"}
-        precision={humidityPrecision}
+        precision={precision}
         valueName="humidity"
         colorRgb="51, 153, 255"
         // dayMode
       />
-      <h1 className="text-slate-300 mt-4 mb-2 text-2xl">Sensor 2 (Upstairs) {sensor2[0].humidity.toFixed(2)}%</h1>
+      <h1 className="text-slate-300 mt-4 mb-2 text-2xl">
+        Sensor 2 (Upstairs) {sensor2 && sensor2[0].humidity.toFixed(2)}%
+      </h1>
       <Graph
         mode={humbarMode}
         dataset={sensor2}
         scale={"time"}
-        precision={humidityPrecision}
+        precision={precision}
         valueName="humidity"
         colorRgb="51, 153, 255"
         // dayMode
       />
-      <h1 className="text-slate-300 mt-4 mb-2 text-2xl">Sensor 3 (Outside) {sensor3[0].humidity.toFixed(2)}%</h1>
+      <h1 className="text-slate-300 mt-4 mb-2 text-2xl">
+        Sensor 3 (Outside) {sensor3 && sensor3[0].humidity.toFixed(2)}%
+      </h1>
       <Graph
         mode={humbarMode}
         dataset={sensor3}
         scale={"time"}
-        precision={humidityPrecision}
+        precision={precision}
         valueName="humidity"
         colorRgb="51, 153, 255"
         // dayMode
@@ -342,72 +251,71 @@ Sensor 1 (Living room) {sensor1[0].humidity.toFixed(2)}%</h1>
     </div>
   );
 }
-export const getServerSideProps = async ({query}) => {
+// export const getServerSideProps = async ({query}) => {
 
-  const tp = parseInt(query.tp)
+//   const tp = parseInt(query.tp)
 
-  const fetchSince = tp ? tp : 60
-  const url = process.env.HOST + "/ago/"+fetchSince;
-  console.log('url: ', url)
-  // Create headers object with the custom header
-  const headers = new Headers();
-  headers.append("ngrok-skip-browser-warning", "true");
-console.log(url)
-  // Fetch with custom headers
-  const res = await fetch(url, {
-    method: "GET", // or 'POST' or other HTTP methods
-    headers: headers,
-  });
-  const data = await res.json();
+//   const fetchSince = tp ? tp : 60
+//   const url = process.env.HOST + "/ago/"+fetchSince;
+//   console.log('url: ', url)
+//   // Create headers object with the custom header
+//   const headers = new Headers();
+//   headers.append("ngrok-skip-browser-warning", "true");
+// console.log(url)
+//   // Fetch with custom headers
+//   const res = await fetch(url, {
+//     method: "GET", // or 'POST' or other HTTP methods
+//     headers: headers,
+//   });
+//   const data = await res.json();
 
-  // const dataPoints = data.data.filter(
-  //   (entry) => new Date(entry.timestamp).getTime() > subDays(new Date(), 1)
-  // );
+//   // const dataPoints = data.data.filter(
+//   //   (entry) => new Date(entry.timestamp).getTime() > subDays(new Date(), 1)
+//   // );
 
-  const agg_url = process.env.HOST + "/aggregated/all";
+//   const agg_url = process.env.HOST + "/aggregated/all";
 
-  // Fetch with custom headers
-  const agg_res = await fetch(agg_url, {
-    method: "GET", // or 'POST' or other HTTP methods
-    headers: headers,
-  });
-  const agg_data = await agg_res.json();
+//   // Fetch with custom headers
+//   const agg_res = await fetch(agg_url, {
+//     method: "GET", // or 'POST' or other HTTP methods
+//     headers: headers,
+//   });
+//   const agg_data = await agg_res.json();
 
-  // const cum_url = process.env.HOST + "/allEjaculationData";
+//   // const cum_url = process.env.HOST + "/allEjaculationData";
 
-  // Fetch with custom headers
-  // const cum_res = await fetch(cum_url, {
-  //   method: "GET", // or 'POST' or other HTTP methods
-  //   headers: headers,
-  // });
-  // const cum_data = await cum_res.json();
+//   // Fetch with custom headers
+//   // const cum_res = await fetch(cum_url, {
+//   //   method: "GET", // or 'POST' or other HTTP methods
+//   //   headers: headers,
+//   // });
+//   // const cum_data = await cum_res.json();
 
-  // const interpolated_data = []
-  // cum_data.data.forEach(entry => {
-  //   const date = new Date(entry.date)
-  //   const nextDate = addDays(date, 1)
-  //   console.log(nextDate)
-  //   console.log(format(nextDate, 'yyyy-MM-dd'))
-  //   const result = cum_data.data.find(x => x.date === nextDate)
-  //   if(result) return
+//   // const interpolated_data = []
+//   // cum_data.data.forEach(entry => {
+//   //   const date = new Date(entry.date)
+//   //   const nextDate = addDays(date, 1)
+//   //   console.log(nextDate)
+//   //   console.log(format(nextDate, 'yyyy-MM-dd'))
+//   //   const result = cum_data.data.find(x => x.date === nextDate)
+//   //   if(result) return
 
-  // })
+//   // })
 
-
-  console.log(data)
-  return {
-    props: {
-      sensor1: data.data.sensor1,
-      sensor2: data.data.sensor2,
-      sensor3: data.data.sensor3,
-      aggregated_data: agg_data.data,
-      // cum_data: cum_data.data,
-      // temperature,
-      // humidity,
-      // smoke,
-      // ejaculation,
-      // main,
-    },
-    // revalidate: 60
-  };
-};
+//   console.log(data)
+//   return {
+//     props: {
+//       sensor1: data.data.sensor1,
+//       sensor2: data.data.sensor2,
+//       sensor3: data.data.sensor3,
+//       aggregated_data: agg_data.data,
+//       // cum_data: cum_data.data,
+//       // temperature,
+//       // humidity,
+//       // smoke,
+//       // ejaculation,
+//       // main,
+//     },
+//     // revalidate: 60
+//   };
+// };

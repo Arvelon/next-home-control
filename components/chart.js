@@ -25,10 +25,15 @@ export default function Graph({
   disabled,
   dayMode,
   precision,
-  labelOverride
+  labelOverride,
 }) {
-  if (disabled) return "Data Source Offline";
-  const originalData = dataset
+  if (disabled || !dataset)
+    return (
+      <p className="text-red-500 border-2 border-dashed border-slate-700 p-4">
+        Data Source Offline
+      </p>
+    );
+  const originalData = dataset;
   ChartJS.register(
     CategoryScale,
     TimeScale,
@@ -42,7 +47,9 @@ export default function Graph({
   const temparr =
     scale == "date"
       ? Object.values(dataset)
-      : dataset.slice(0, precision).map((entry) => parseFloat(entry[valueName]));
+      : dataset
+          .slice(0, precision)
+          .map((entry) => parseFloat(entry[valueName]));
   const min = Math.min(...temparr);
   const max = Math.max(...temparr);
   const options = {
@@ -54,7 +61,7 @@ export default function Graph({
       //     locale: be,
       //   },
       // },
-      
+
       x: {
         type: "time",
         time: {
@@ -90,11 +97,16 @@ export default function Graph({
       : dataset.slice(0, precision).map((i, key) => parseFloat(i[valueName]));
 
   const data = {
-    labels: valueName === "count" ? originalData.map(d => new Date(d.date)) : labels,
+    labels:
+      valueName === "count"
+        ? originalData.map((d) => new Date(d.date))
+        : labels,
     datasets: [
       {
-        label: labelOverride || valueName.charAt(0).toUpperCase() + valueName.slice(1),
-        data: valueName === "count" ? originalData.map(d => d.count) : temps,
+        label:
+          labelOverride ||
+          valueName.charAt(0).toUpperCase() + valueName.slice(1),
+        data: valueName === "count" ? originalData.map((d) => d.count) : temps,
         fill: true,
         pointRadius: 1.5,
         borderWidth: 1.5,
@@ -105,7 +117,10 @@ export default function Graph({
   };
 
   return (
-    <div className="h-4/5 w-11/12 flex justify-center">
+    <div className="h-72 w-11/12 flex-col justify-center">
+      <h1 className="text-slate-300 mt-4 mb-2 text-2xl">
+        Sensor 1 (Living room) {data[0] && data[0].toFixed(2)}°C
+      </h1>
       {!mode ? (
         <Line options={options} data={data} />
       ) : (
