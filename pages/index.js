@@ -15,7 +15,7 @@ export default function Home({ sensor1, sensor2, sensor3, aggregated_data, cum_d
 
   const [activeCard, setActiveCard] = useState(false);
   const [mode, setMode] = useState("line");
-  const [temperaturePrecision, setTemperaturePrecision] = useState(60);
+  const [temperaturePrecision, setTemperaturePrecision] = useState(59);
   const [humidityPrecision, setHumidityPrecision] = useState(60);
   const [tempBarMode, setTempBarMode] = useState(false);
   const [humbarMode, setHumbarMode] = useState(false);
@@ -48,7 +48,7 @@ export default function Home({ sensor1, sensor2, sensor3, aggregated_data, cum_d
     localStorage.setItem("temperaturePrecision", temperaturePrecision);
     localStorage.setItem("humidityPrecision", humidityPrecision);
     console.log(window.location.search)
-    if(window.location.search === "/?tp="+temperaturePrecision + "&hp="+humidityPrecision) window.location = "/?tp="+temperaturePrecision + "&hp="+humidityPrecision
+    if(!window.location.search.includes("tp") || (window.location.search !== "?tp="+temperaturePrecision && temperaturePrecision !== 59)) window.location = "/?tp="+temperaturePrecision
   }, [temperaturePrecision, humidityPrecision]);
 
   const focusHandler = (card, action, e) => {
@@ -345,11 +345,10 @@ Sensor 1 (Living room) {sensor1[0].humidity.toFixed(2)}%</h1>
 export const getServerSideProps = async ({query}) => {
 
   const tp = parseInt(query.tp)
-  const hp = query.hp
 
-  const fetchSince = tp ? subMinutes(new Date(), tp).getTime() : 60
-
-  const url = process.env.HOST + "/ago/"+tp;
+  const fetchSince = tp ? tp : 60
+  const url = process.env.HOST + "/ago/"+fetchSince;
+  console.log('url: ', url)
   // Create headers object with the custom header
   const headers = new Headers();
   headers.append("ngrok-skip-browser-warning", "true");
