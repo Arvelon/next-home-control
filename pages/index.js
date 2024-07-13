@@ -7,7 +7,13 @@ import { AiFillCloseCircle } from "react-icons/ai";
 import CardChart from "@/components/card-chart";
 import { ta } from "date-fns/locale";
 
-export default function Home({ sensor1, sensor2, sensor3, aggregated_data, cum_data }) {
+export default function Home({
+  sensor1,
+  sensor2,
+  sensor3,
+  aggregated_data,
+  cum_data,
+}) {
   // console.log('sensor2', sensor2)
   // console.log('aggregated', aggregated_data)
   // console.log('c', cum_data)
@@ -22,7 +28,6 @@ export default function Home({ sensor1, sensor2, sensor3, aggregated_data, cum_d
   const [timer, setTimer] = useState(60);
 
   useEffect(() => {
-    
     const intervalId = setInterval(() => {
       // Reload the current page
       location.reload();
@@ -47,8 +52,13 @@ export default function Home({ sensor1, sensor2, sensor3, aggregated_data, cum_d
     // console.log(temperaturePrecision, humidityPrecision);
     localStorage.setItem("temperaturePrecision", temperaturePrecision);
     localStorage.setItem("humidityPrecision", humidityPrecision);
-    console.log(window.location.search)
-    if(!window.location.search.includes("tp") || (window.location.search !== "?tp="+temperaturePrecision && temperaturePrecision !== 59)) window.location = "/?tp="+temperaturePrecision
+    console.log(window.location.search);
+    if (
+      !window.location.search.includes("tp") ||
+      (window.location.search !== "?tp=" + temperaturePrecision &&
+        temperaturePrecision !== 59)
+    )
+      window.location = "/?tp=" + temperaturePrecision;
   }, [temperaturePrecision, humidityPrecision]);
 
   const focusHandler = (card, action, e) => {
@@ -160,7 +170,7 @@ export default function Home({ sensor1, sensor2, sensor3, aggregated_data, cum_d
         Sensor 1 (Living room) {sensor1[0].temperature.toFixed(2)}°C
       </h1>
       <div className="flex mb-2">
-      <button
+        <button
           onClick={() => setTemperaturePrecision(1440)}
           className={`border py-1 w-12 ${
             temperaturePrecision === 1440 ? "font-bold" : ""
@@ -208,7 +218,9 @@ export default function Home({ sensor1, sensor2, sensor3, aggregated_data, cum_d
         colorRgb="255, 99, 132"
         // dayMode
       />
-      <h1 className="text-slate-300 mt-4 mb-2 text-2xl">Average daily temperature</h1>
+      <h1 className="text-slate-300 mt-4 mb-2 text-2xl">
+        Average daily temperature
+      </h1>
       <Graph
         mode={tempBarMode}
         dataset={aggregated_data}
@@ -244,13 +256,13 @@ export default function Home({ sensor1, sensor2, sensor3, aggregated_data, cum_d
         // dayMode
       />
 
-<h1 className="text-slate-300 mt-4 mb-2 text-3xl">Humidity</h1>
+      <h1 className="text-slate-300 mt-4 mb-2 text-3xl">Humidity</h1>
 
-
-<h1 className="text-slate-300 mt-4 mb-2 text-2xl">
-Sensor 1 (Living room) {sensor1[0].humidity.toFixed(2)}%</h1>
+      <h1 className="text-slate-300 mt-4 mb-2 text-2xl">
+        Sensor 1 (Living room) {sensor1[0].humidity.toFixed(2)}%
+      </h1>
       <div className="flex mb-2">
-      <button
+        <button
           onClick={() => setHumidityPrecision(1440)}
           className={`border py-1 w-12 ${
             humidityPrecision === 1440 ? "font-bold" : ""
@@ -289,7 +301,7 @@ Sensor 1 (Living room) {sensor1[0].humidity.toFixed(2)}%</h1>
           {tempBarMode ? "Line" : "Bar"}
         </button>
       </div>
-      
+
       <Graph
         mode={humbarMode}
         dataset={sensor1}
@@ -299,7 +311,9 @@ Sensor 1 (Living room) {sensor1[0].humidity.toFixed(2)}%</h1>
         colorRgb="51, 153, 255"
         // dayMode
       />
-      <h1 className="text-slate-300 mt-4 mb-2 text-2xl">Sensor 2 (Upstairs) {sensor2[0].humidity.toFixed(2)}%</h1>
+      <h1 className="text-slate-300 mt-4 mb-2 text-2xl">
+        Sensor 2 (Upstairs) {sensor2[0].humidity.toFixed(2)}%
+      </h1>
       <Graph
         mode={humbarMode}
         dataset={sensor2}
@@ -309,7 +323,9 @@ Sensor 1 (Living room) {sensor1[0].humidity.toFixed(2)}%</h1>
         colorRgb="51, 153, 255"
         // dayMode
       />
-      <h1 className="text-slate-300 mt-4 mb-2 text-2xl">Sensor 3 (Outside) {sensor3[0].humidity.toFixed(2)}%</h1>
+      <h1 className="text-slate-300 mt-4 mb-2 text-2xl">
+        Sensor 3 (Outside) {sensor3[0].humidity.toFixed(2)}%
+      </h1>
       <Graph
         mode={humbarMode}
         dataset={sensor3}
@@ -342,17 +358,16 @@ Sensor 1 (Living room) {sensor1[0].humidity.toFixed(2)}%</h1>
     </div>
   );
 }
-export const getServerSideProps = async ({query}) => {
+export const getServerSideProps = async ({ query }) => {
+  const tp = parseInt(query.tp);
 
-  const tp = parseInt(query.tp)
-
-  const fetchSince = tp ? tp : 60
-  const url = process.env.HOST + "/ago/"+fetchSince;
-  console.log('url: ', url)
+  const fetchSince = isNaN(tp) ? 60 : tp;
+  const url = process.env.HOST + "/ago/" + fetchSince;
+  console.log("url: ", url);
   // Create headers object with the custom header
   const headers = new Headers();
   headers.append("ngrok-skip-browser-warning", "true");
-console.log(url)
+  console.log(url);
   // Fetch with custom headers
   const res = await fetch(url, {
     method: "GET", // or 'POST' or other HTTP methods
@@ -393,8 +408,7 @@ console.log(url)
 
   // })
 
-
-  console.log(data)
+  console.log(data);
   return {
     props: {
       sensor1: data.data.sensor1,
