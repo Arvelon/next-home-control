@@ -110,6 +110,7 @@ export default function Home({
   };
 
   const dataValidator = (fullStack) => {
+    if (!sensor1) return;
     // These conditions have overlap, but they are executet in the right order so there is no issue
     const green = sensor1.length == fullStack;
 
@@ -167,7 +168,7 @@ export default function Home({
       <h1 className="text-slate-300 mt-4 mb-2 text-3xl">Temperature</h1>
 
       <h1 className="text-slate-300 mt-4 mb-2 text-2xl">
-        Sensor 1 (Living room) {sensor1[0].temperature.toFixed(2)}°C
+        Sensor 1 (Living room) {sensor1 && sensor1[0].temperature.toFixed(2)}°C
       </h1>
       <div className="flex mb-2">
         <button
@@ -232,7 +233,7 @@ export default function Home({
         // dayMode
       />
       <h1 className="text-slate-300 mt-4 mb-2 text-2xl">
-        Sensor 2 (Upstairs) {sensor2[0].temperature.toFixed(2)}°C
+        Sensor 2 (Upstairs) {sensor2 && sensor2[0].temperature.toFixed(2)}°C
       </h1>
       <Graph
         mode={tempBarMode}
@@ -244,7 +245,8 @@ export default function Home({
         // dayMode
       />
       <h1 className="text-slate-300 mt-4 mb-2 text-2xl">
-        Sensor 3 (Outside) {sensor3[0].temperature.toFixed(2)}°C
+        Sensor 3 (Outside){" "}
+        {sensor3 && sensor3.length && sensor3[0].temperature.toFixed(2)}°C
       </h1>
       <Graph
         mode={tempBarMode}
@@ -312,7 +314,8 @@ export default function Home({
         // dayMode
       />
       <h1 className="text-slate-300 mt-4 mb-2 text-2xl">
-        Sensor 2 (Upstairs) {sensor2[0].humidity.toFixed(2)}%
+        Sensor 2 (Upstairs){" "}
+        {sensor2 && sensor2.length && sensor2[0].humidity.toFixed(2)}%
       </h1>
       <Graph
         mode={humbarMode}
@@ -324,7 +327,8 @@ export default function Home({
         // dayMode
       />
       <h1 className="text-slate-300 mt-4 mb-2 text-2xl">
-        Sensor 3 (Outside) {sensor3[0].humidity.toFixed(2)}%
+        Sensor 3 (Outside){" "}
+        {sensor3 && sensor3.length && sensor3[0].humidity.toFixed(2)}%
       </h1>
       <Graph
         mode={humbarMode}

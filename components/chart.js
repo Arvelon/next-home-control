@@ -25,10 +25,11 @@ export default function Graph({
   disabled,
   dayMode,
   precision,
-  labelOverride
+  labelOverride,
 }) {
-  if (disabled) return "Data Source Offline";
-  const originalData = dataset
+  if (disabled || !dataset || !dataset.length)
+    return <p className="text-ted-500">Data Source Offline</p>;
+  const originalData = dataset;
   ChartJS.register(
     CategoryScale,
     TimeScale,
@@ -42,7 +43,9 @@ export default function Graph({
   const temparr =
     scale == "date"
       ? Object.values(dataset)
-      : dataset.slice(0, precision).map((entry) => parseFloat(entry[valueName]));
+      : dataset
+          .slice(0, precision)
+          .map((entry) => parseFloat(entry[valueName]));
   const min = Math.min(...temparr);
   const max = Math.max(...temparr);
   const options = {
@@ -54,7 +57,7 @@ export default function Graph({
       //     locale: be,
       //   },
       // },
-      
+
       x: {
         type: "time",
         time: {
@@ -90,11 +93,16 @@ export default function Graph({
       : dataset.slice(0, precision).map((i, key) => parseFloat(i[valueName]));
 
   const data = {
-    labels: valueName === "count" ? originalData.map(d => new Date(d.date)) : labels,
+    labels:
+      valueName === "count"
+        ? originalData.map((d) => new Date(d.date))
+        : labels,
     datasets: [
       {
-        label: labelOverride || valueName.charAt(0).toUpperCase() + valueName.slice(1),
-        data: valueName === "count" ? originalData.map(d => d.count) : temps,
+        label:
+          labelOverride ||
+          valueName.charAt(0).toUpperCase() + valueName.slice(1),
+        data: valueName === "count" ? originalData.map((d) => d.count) : temps,
         fill: true,
         pointRadius: 1.5,
         borderWidth: 1.5,
