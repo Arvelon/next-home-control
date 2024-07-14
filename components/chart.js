@@ -28,7 +28,11 @@ export default function Graph({
   labelOverride,
 }) {
   if (disabled || !dataset || !dataset.length)
-    return <p className="text-ted-500">Data Source Offline</p>;
+    return (
+      <p className="text-red-500 border-2 border-dashed border-slate-500 p-4">
+        Data Source Offline
+      </p>
+    );
   const originalData = dataset;
   ChartJS.register(
     CategoryScale,
