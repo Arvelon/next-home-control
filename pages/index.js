@@ -110,7 +110,7 @@ export default function Home({
   };
 
   const dataValidator = (fullStack) => {
-    if (!sensor1) return;
+    if (!sensor1 || !sensor1.length) return;
     // These conditions have overlap, but they are executet in the right order so there is no issue
     const green = sensor1.length == fullStack;
 
@@ -238,7 +238,8 @@ export default function Home({
         // dayMode
       />
       <h1 className="text-slate-300 mt-4 mb-2 text-2xl">
-        Sensor 2 (Upstairs) {sensor2 && sensor2[0].temperature.toFixed(2)}°C
+        Sensor 2 (Upstairs){" "}
+        {sensor2 && sensor2.length && sensor2[0].temperature.toFixed(2)}°C
       </h1>
       <Graph
         mode={tempBarMode}
@@ -266,7 +267,8 @@ export default function Home({
       <h1 className="text-slate-300 mt-4 mb-2 text-3xl">Humidity</h1>
 
       <h1 className="text-slate-300 mt-4 mb-2 text-2xl">
-        Sensor 1 (Living room) {sensor1[0].humidity.toFixed(2)}%
+        Sensor 1 (Living room){" "}
+        {sensor1 && sensor1.length && sensor1[0].humidity.toFixed(2)}%
       </h1>
       <div className="flex mb-2">
         <button
@@ -368,69 +370,80 @@ export default function Home({
   );
 }
 export const getServerSideProps = async ({ query }) => {
-  const tp = parseInt(query.tp);
+  try {
+    const tp = parseInt(query.tp);
 
-  const fetchSince = isNaN(tp) ? 60 : tp;
-  const url = process.env.HOST + "/ago/" + fetchSince;
-  console.log("url: ", url);
-  // Create headers object with the custom header
-  const headers = new Headers();
-  headers.append("ngrok-skip-browser-warning", "true");
-  console.log(url);
-  // Fetch with custom headers
-  const res = await fetch(url, {
-    method: "GET", // or 'POST' or other HTTP methods
-    headers: headers,
-  });
-  const data = await res.json();
+    const fetchSince = isNaN(tp) ? 60 : tp;
+    const url = process.env.HOST + "/ago/" + fetchSince;
+    console.log("url: ", url);
+    // Create headers object with the custom header
+    const headers = new Headers();
+    headers.append("ngrok-skip-browser-warning", "true");
+    console.log(url);
+    // Fetch with custom headers
+    const res = await fetch(url, {
+      method: "GET", // or 'POST' or other HTTP methods
+      headers: headers,
+    });
+    const data = await res.json();
 
-  // const dataPoints = data.data.filter(
-  //   (entry) => new Date(entry.timestamp).getTime() > subDays(new Date(), 1)
-  // );
+    // const dataPoints = data.data.filter(
+    //   (entry) => new Date(entry.timestamp).getTime() > subDays(new Date(), 1)
+    // );
 
-  const agg_url = process.env.HOST + "/aggregated/all";
+    const agg_url = process.env.HOST + "/aggregated/all";
 
-  // Fetch with custom headers
-  const agg_res = await fetch(agg_url, {
-    method: "GET", // or 'POST' or other HTTP methods
-    headers: headers,
-  });
-  const agg_data = await agg_res.json();
+    // Fetch with custom headers
+    const agg_res = await fetch(agg_url, {
+      method: "GET", // or 'POST' or other HTTP methods
+      headers: headers,
+    });
+    const agg_data = await agg_res.json();
 
-  // const cum_url = process.env.HOST + "/allEjaculationData";
+    // const cum_url = process.env.HOST + "/allEjaculationData";
 
-  // Fetch with custom headers
-  // const cum_res = await fetch(cum_url, {
-  //   method: "GET", // or 'POST' or other HTTP methods
-  //   headers: headers,
-  // });
-  // const cum_data = await cum_res.json();
+    // Fetch with custom headers
+    // const cum_res = await fetch(cum_url, {
+    //   method: "GET", // or 'POST' or other HTTP methods
+    //   headers: headers,
+    // });
+    // const cum_data = await cum_res.json();
 
-  // const interpolated_data = []
-  // cum_data.data.forEach(entry => {
-  //   const date = new Date(entry.date)
-  //   const nextDate = addDays(date, 1)
-  //   console.log(nextDate)
-  //   console.log(format(nextDate, 'yyyy-MM-dd'))
-  //   const result = cum_data.data.find(x => x.date === nextDate)
-  //   if(result) return
+    // const interpolated_data = []
+    // cum_data.data.forEach(entry => {
+    //   const date = new Date(entry.date)
+    //   const nextDate = addDays(date, 1)
+    //   console.log(nextDate)
+    //   console.log(format(nextDate, 'yyyy-MM-dd'))
+    //   const result = cum_data.data.find(x => x.date === nextDate)
+    //   if(result) return
 
-  // })
+    // })
 
-  console.log(data);
-  return {
-    props: {
-      sensor1: data.data.sensor1,
-      sensor2: data.data.sensor2,
-      sensor3: data.data.sensor3,
-      aggregated_data: agg_data.data,
-      // cum_data: cum_data.data,
-      // temperature,
-      // humidity,
-      // smoke,
-      // ejaculation,
-      // main,
-    },
-    // revalidate: 60
-  };
+    console.log(data);
+    return {
+      props: {
+        sensor1: data.data.sensor1,
+        sensor2: data.data.sensor2,
+        sensor3: data.data.sensor3,
+        aggregated_data: agg_data.data,
+        // cum_data: cum_data.data,
+        // temperature,
+        // humidity,
+        // smoke,
+        // ejaculation,
+        // main,
+      },
+      // revalidate: 60
+    };
+  } catch (err) {
+    return {
+      props: {
+        sensor1: [],
+        sensor2: [],
+        sensor3: [],
+        aggregated_data: [],
+      },
+    };
+  }
 };
