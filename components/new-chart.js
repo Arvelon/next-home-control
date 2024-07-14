@@ -28,12 +28,12 @@ export default function NewChart({
   namespace,
   label,
   precision,
-  mode,
   scale = "linear",
   valueName,
   dayMode = false,
   colorRgb = "51, 153, 255",
   unit,
+  chartTypeBar = false,
 }) {
   const [chartData, setChartData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -140,7 +140,7 @@ export default function NewChart({
           {unit ?? ""}
         </span>
       </h1>
-      {!mode ? (
+      {!chartTypeBar ? (
         <Line options={chartData.options} data={chartData.data} />
       ) : (
         <Bar options={chartData.options} data={chartData.data} />

@@ -15,98 +15,16 @@ export default function Home({
   aggregated_data,
   cum_data,
 }) {
-  // console.log('sensor2', sensor2)
-  // console.log('aggregated', aggregated_data)
-  // console.log('c', cum_data)
-  // console.log('sensor1', sensor1)
-
-  const [activeCard, setActiveCard] = useState(false);
-  const [mode, setMode] = useState("line");
-  const [temperaturePrecision, setTemperaturePrecision] = useState(59);
-  const [humidityPrecision, setHumidityPrecision] = useState(60);
-  const [tempBarMode, setTempBarMode] = useState(false);
-  const [humbarMode, setHumbarMode] = useState(false);
-  const [timer, setTimer] = useState(60);
+  const [precision, setPrecision] = useState(60);
+  const [chartTypeBar, setChartTypeBar] = useState(false);
 
   useEffect(() => {
-    // const intervalId = setInterval(() => {
-    //   // Reload the current page
-    //   location.reload();
-    // }, 60000);
-
-    // const counterInterval = setInterval(() => {
-    //   setTimer((prevTimer) => prevTimer - 1);
-    // }, 1000);
-
-    setTemperaturePrecision(
-      parseInt(localStorage.getItem("temperaturePrecision")) || 60
-    );
-    setHumidityPrecision(
-      parseInt(localStorage.getItem("humidityPrecision")) || 60
-    );
-
-    // Cleanup the interval when the component unmounts
-  }, []); // Empty dependency array ensures the effect runs only once on mount
+    setPrecision(parseInt(localStorage.getItem("precision")) || 60);
+  }, []);
 
   useEffect(() => {
-    // console.log(temperaturePrecision, humidityPrecision);
-    localStorage.setItem("temperaturePrecision", temperaturePrecision);
-    localStorage.setItem("humidityPrecision", humidityPrecision);
-    if (
-      !window.location.search.includes("tp") ||
-      (window.location.search !== "?tp=" + temperaturePrecision &&
-        temperaturePrecision !== 59)
-    )
-      window.location = "/?tp=" + temperaturePrecision;
-  }, [temperaturePrecision, humidityPrecision]);
-
-  const focusHandler = (card, action, e) => {
-    // console.log(card, action);
-    // console.log(e);
-    // console.log(e.target.id);
-    setActiveCard(
-      e.target.id === "close" || e.target.parentNode.id === "close"
-        ? false
-        : card
-    );
-  };
-
-  // const interval = setInterval(async () => {
-  //   const temp = await fetch(process.env.HOST + "/api/temperature");
-  //   setLiveTemp(await temp.json())
-  // }, 300)
-
-  // const setGrid = async (direction, increase) => {
-  //   const config = await getValue("main", "config");
-  //   console.log(config);
-
-  //   if (increase) {
-  //     config[direction] += 1;
-  //   } else {
-  //     config[direction] -= 1;
-  //   }
-  //   // console.log("r", config);
-  //   const gridString = "grid-rows-" + config.rows + " grid-cols-" + config.cols;
-  //   setGridState(gridString);
-  //   setValue("main", "config", config);
-  //   // console.log(gridString);
-  // };
-  // setGrid('cols', false)
-
-  // useEffect(() => {
-  //   const viewSettings = localStorage.getItem('viewSettings');
-  //   const settings = viewSettings ? JSON.parse(viewSettings) : false;
-  //   if(settings) {
-
-  //   }
-  // })
-
-  const addCum = async () => {
-    const res = await fetch("api/ejaculation");
-    const json = await res.json();
-    console.log(json);
-    window.location.reload();
-  };
+    localStorage.setItem("precision", precision);
+  }, [precision]);
 
   const dataValidator = (fullStack) => {
     if (!sensor1 || !sensor1.length) return;
@@ -163,180 +81,186 @@ export default function Home({
       className={`pb-24 flex flex-col items-center bg-slate-950 text-slate-300 `}
     >
       <div className="absolute right-0 px-2 py-1">
-        {process.env.NEXT_PUBLIC_APP_VERSION || "-"} {timer}
+        {process.env.NEXT_PUBLIC_APP_VERSION || "-"}
       </div>
-
       <h1 className="text-slate-300 mt-4 mb-2 text-3xl">Temperature</h1>
-
       <div className="flex mb-2">
         <button
-          onClick={() => setTemperaturePrecision(1440)}
+          onClick={() => setPrecision(1440)}
           className={`border py-1 w-12 ${
-            temperaturePrecision === 1440 ? "font-bold" : ""
+            precision === 1440 ? "font-bold" : ""
           }`}
         >
           24h
         </button>
         <button
-          onClick={() => setTemperaturePrecision(120)}
-          className={`border py-1 w-12 ${
-            temperaturePrecision === 120 ? "font-bold" : ""
-          }`}
+          onClick={() => setPrecision(120)}
+          className={`border py-1 w-12 ${precision === 120 ? "font-bold" : ""}`}
         >
           2h
         </button>
         <button
-          onClick={() => setTemperaturePrecision(60)}
-          className={`border py-1 w-12 ${
-            temperaturePrecision === 60 ? "font-bold" : ""
-          }`}
+          onClick={() => setPrecision(60)}
+          className={`border py-1 w-12 ${precision === 60 ? "font-bold" : ""}`}
         >
           1h
         </button>
         <button
-          onClick={() => setTemperaturePrecision(10)}
-          className={`border py-1 w-12 ${
-            temperaturePrecision === 10 ? "font-bold" : ""
-          }`}
+          onClick={() => setPrecision(10)}
+          className={`border py-1 w-12 ${precision === 10 ? "font-bold" : ""}`}
         >
           10m
         </button>
         <button
-          onClick={() => setTempBarMode(!tempBarMode)}
+          onClick={() => setChartTypeBar(!chartTypeBar)}
           className={`border py-1 w-12`}
         >
-          {tempBarMode ? "Line" : "Bar"}
+          {chartTypeBar ? "Line" : "Bar"}
         </button>
       </div>
-
+      {/* <NewChart
+        precision={precision}
+        namespace="aggregated_data"
+        label="Aggregated 1 test"
+        valueName="temperature"
+        unit="°C"
+        colorRgb="0, 200, 100"
+        chartTypeBar={chartTypeBar}
+      />
+      ---------------------------------------------------------------- */}
       <NewChart
-        precision={temperaturePrecision}
+        precision={precision}
         namespace="climate_sensor_1"
         label="Sensor 1 (Living Room)"
         valueName="temperature"
         unit="°C"
         colorRgb="255, 99, 132"
+        chartTypeBar={chartTypeBar}
       />
       <NewChart
-        precision={temperaturePrecision}
+        precision={precision}
         namespace="climate_sensor_2"
         label="Sensor 2 (Upstairs)"
         valueName="temperature"
         unit="°C"
         colorRgb="255, 99, 132"
+        chartTypeBar={chartTypeBar}
       />
       <NewChart
-        precision={temperaturePrecision}
+        precision={precision}
         namespace="climate_sensor_3"
         label="Sensor 3 (Outside)"
         valueName="temperature"
         unit="°C"
         colorRgb="255, 99, 132"
+        chartTypeBar={chartTypeBar}
       />
-
       <NewChart
-        precision={temperaturePrecision}
+        precision={precision}
         namespace="climate_sensor_1"
         label="Sensor 1 (Living Room)"
         valueName="humidity"
         unit="%"
         colorRgb="51, 153, 255"
+        chartTypeBar={chartTypeBar}
       />
       <NewChart
-        precision={temperaturePrecision}
+        precision={precision}
         namespace="climate_sensor_2"
         label="Sensor 2 (Upstairs)"
         valueName="humidity"
         unit="%"
         colorRgb="51, 153, 255"
+        chartTypeBar={chartTypeBar}
       />
       <NewChart
-        precision={temperaturePrecision}
+        precision={precision}
         namespace="climate_sensor_3"
         label="Sensor 3 (Outside)"
         valueName="humidity"
         unit="%"
         colorRgb="51, 153, 255"
+        chartTypeBar={chartTypeBar}
       />
       {dataValidator(120)}
     </div>
   );
 }
-export const getServerSideProps = async ({ query }) => {
-  try {
-    const tp = parseInt(query.tp);
+// export const getServerSideProps = async ({ query }) => {
+//   try {
+//     const tp = parseInt(query.tp);
 
-    const fetchSince = isNaN(tp) ? 60 : tp;
-    const url = process.env.HOST + "/ago/" + fetchSince;
-    console.log("url: ", url);
-    // Create headers object with the custom header
-    const headers = new Headers();
-    headers.append("ngrok-skip-browser-warning", "true");
-    console.log(url);
-    // Fetch with custom headers
-    const res = await fetch(url, {
-      method: "GET", // or 'POST' or other HTTP methods
-      headers: headers,
-    });
-    const data = await res.json();
+//     const fetchSince = isNaN(tp) ? 60 : tp;
+//     const url = process.env.HOST + "/ago/" + fetchSince;
+//     console.log("url: ", url);
+//     // Create headers object with the custom header
+//     const headers = new Headers();
+//     headers.append("ngrok-skip-browser-warning", "true");
+//     console.log(url);
+//     // Fetch with custom headers
+//     const res = await fetch(url, {
+//       method: "GET", // or 'POST' or other HTTP methods
+//       headers: headers,
+//     });
+//     const data = await res.json();
 
-    // const dataPoints = data.data.filter(
-    //   (entry) => new Date(entry.timestamp).getTime() > subDays(new Date(), 1)
-    // );
+//     // const dataPoints = data.data.filter(
+//     //   (entry) => new Date(entry.timestamp).getTime() > subDays(new Date(), 1)
+//     // );
 
-    const agg_url = process.env.HOST + "/aggregated/all";
+//     const agg_url = process.env.HOST + "/aggregated/all";
 
-    // Fetch with custom headers
-    const agg_res = await fetch(agg_url, {
-      method: "GET", // or 'POST' or other HTTP methods
-      headers: headers,
-    });
-    const agg_data = await agg_res.json();
+//     // Fetch with custom headers
+//     const agg_res = await fetch(agg_url, {
+//       method: "GET", // or 'POST' or other HTTP methods
+//       headers: headers,
+//     });
+//     const agg_data = await agg_res.json();
 
-    // const cum_url = process.env.HOST + "/allEjaculationData";
+//     // const cum_url = process.env.HOST + "/allEjaculationData";
 
-    // Fetch with custom headers
-    // const cum_res = await fetch(cum_url, {
-    //   method: "GET", // or 'POST' or other HTTP methods
-    //   headers: headers,
-    // });
-    // const cum_data = await cum_res.json();
+//     // Fetch with custom headers
+//     // const cum_res = await fetch(cum_url, {
+//     //   method: "GET", // or 'POST' or other HTTP methods
+//     //   headers: headers,
+//     // });
+//     // const cum_data = await cum_res.json();
 
-    // const interpolated_data = []
-    // cum_data.data.forEach(entry => {
-    //   const date = new Date(entry.date)
-    //   const nextDate = addDays(date, 1)
-    //   console.log(nextDate)
-    //   console.log(format(nextDate, 'yyyy-MM-dd'))
-    //   const result = cum_data.data.find(x => x.date === nextDate)
-    //   if(result) return
+//     // const interpolated_data = []
+//     // cum_data.data.forEach(entry => {
+//     //   const date = new Date(entry.date)
+//     //   const nextDate = addDays(date, 1)
+//     //   console.log(nextDate)
+//     //   console.log(format(nextDate, 'yyyy-MM-dd'))
+//     //   const result = cum_data.data.find(x => x.date === nextDate)
+//     //   if(result) return
 
-    // })
+//     // })
 
-    console.log(data);
-    return {
-      props: {
-        sensor1: data.data.sensor1,
-        sensor2: data.data.sensor2,
-        sensor3: data.data.sensor3,
-        aggregated_data: agg_data.data,
-        // cum_data: cum_data.data,
-        // temperature,
-        // humidity,
-        // smoke,
-        // ejaculation,
-        // main,
-      },
-      // revalidate: 60
-    };
-  } catch (err) {
-    return {
-      props: {
-        sensor1: [],
-        sensor2: [],
-        sensor3: [],
-        aggregated_data: [],
-      },
-    };
-  }
-};
+//     console.log(data);
+//     return {
+//       props: {
+//         sensor1: data.data.sensor1,
+//         sensor2: data.data.sensor2,
+//         sensor3: data.data.sensor3,
+//         aggregated_data: agg_data.data,
+//         // cum_data: cum_data.data,
+//         // temperature,
+//         // humidity,
+//         // smoke,
+//         // ejaculation,
+//         // main,
+//       },
+//       // revalidate: 60
+//     };
+//   } catch (err) {
+//     return {
+//       props: {
+//         sensor1: [],
+//         sensor2: [],
+//         sensor3: [],
+//         aggregated_data: [],
+//       },
+//     };
+//   }
+// };
