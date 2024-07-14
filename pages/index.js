@@ -168,7 +168,12 @@ export default function Home({
       <h1 className="text-slate-300 mt-4 mb-2 text-3xl">Temperature</h1>
 
       <h1 className="text-slate-300 mt-4 mb-2 text-2xl">
-        Sensor 1 (Living room) {sensor1 && sensor1[0].temperature.toFixed(2)}°C
+        Sensor 1 (Living room){" "}
+        {sensor1 &&
+          sensor1.length &&
+          sensor1 &&
+          sensor1[0].temperature.toFixed(2)}
+        °C
       </h1>
       <div className="flex mb-2">
         <button
