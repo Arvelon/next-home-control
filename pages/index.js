@@ -161,7 +161,7 @@ export default function Home({
 
   return (
     <div
-      className={`pb-24 flex flex-col items-center bg-slate-950 text-slate-300`}
+      className={`pb-24 flex flex-col items-center bg-slate-950 text-slate-300 `}
     >
       <div className="absolute right-0 px-2 py-1">v0.0.3 {timer}</div>
 
