@@ -224,19 +224,7 @@ export default function Home({
         colorRgb="255, 99, 132"
         // dayMode
       />
-      <h1 className="text-slate-300 mt-4 mb-2 text-2xl">
-        Average daily temperature
-      </h1>
-      <Graph
-        mode={tempBarMode}
-        dataset={aggregated_data}
-        precision={1000}
-        scale={"time"}
-        valueName="temperature"
-        colorRgb="255, 99, 132"
-        labelOverride="Aggregated Temperature"
-        // dayMode
-      />
+
       <h1 className="text-slate-300 mt-4 mb-2 text-2xl">
         Sensor 2 (Upstairs){" "}
         {sensor2 && sensor2.length && sensor2[0].temperature.toFixed(2)}°C
@@ -261,6 +249,19 @@ export default function Home({
         scale={"time"}
         valueName="temperature"
         colorRgb="255, 99, 132"
+        // dayMode
+      />
+      <h1 className="text-slate-300 mt-4 mb-2 text-2xl">
+        Average daily temperature
+      </h1>
+      <Graph
+        mode={tempBarMode}
+        dataset={aggregated_data}
+        precision={1000}
+        scale={"time"}
+        valueName="temperature"
+        colorRgb="255, 99, 132"
+        labelOverride="Aggregated Temperature"
         // dayMode
       />
 
