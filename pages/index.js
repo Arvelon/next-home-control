@@ -162,7 +162,9 @@ export default function Home({
     <div
       className={`pb-24 flex flex-col items-center bg-slate-950 text-slate-300 `}
     >
-      <div className="absolute right-0 px-2 py-1">v0.0.3 {timer}</div>
+      <div className="absolute right-0 px-2 py-1">
+        {process.env.NEXT_PUBLIC_APP_VERSION || "-"} {timer}
+      </div>
 
       <h1 className="text-slate-300 mt-4 mb-2 text-3xl">Temperature</h1>
 
