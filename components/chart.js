@@ -27,9 +27,9 @@ export default function Graph({
   precision,
   labelOverride,
 }) {
-  if (disabled || !dataset)
+  if (disabled || !dataset || !dataset.length)
     return (
-      <p className="text-red-500 border-2 border-dashed border-slate-700 p-4">
+      <p className="text-red-500 border-2 border-dashed border-slate-500 p-4">
         Data Source Offline
       </p>
     );
@@ -117,10 +117,7 @@ export default function Graph({
   };
 
   return (
-    <div className="h-72 w-11/12 flex-col justify-center">
-      <h1 className="text-slate-300 mt-4 mb-2 text-2xl">
-        Sensor 1 (Living room) {data[0] && data[0].toFixed(2)}°C
-      </h1>
+    <div className="h-4/5 w-11/12 flex justify-center">
       {!mode ? (
         <Line options={options} data={data} />
       ) : (
