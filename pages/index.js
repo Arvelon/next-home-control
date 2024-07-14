@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { AiFillCloseCircle } from "react-icons/ai";
 import CardChart from "@/components/card-chart";
 import { ta } from "date-fns/locale";
+import NewChart from "@/components/new-chart";
 
 export default function Home({
   sensor1,
@@ -28,14 +29,14 @@ export default function Home({
   const [timer, setTimer] = useState(60);
 
   useEffect(() => {
-    const intervalId = setInterval(() => {
-      // Reload the current page
-      location.reload();
-    }, 60000);
+    // const intervalId = setInterval(() => {
+    //   // Reload the current page
+    //   location.reload();
+    // }, 60000);
 
-    const counterInterval = setInterval(() => {
-      setTimer((prevTimer) => prevTimer - 1);
-    }, 1000);
+    // const counterInterval = setInterval(() => {
+    //   setTimer((prevTimer) => prevTimer - 1);
+    // }, 1000);
 
     setTemperaturePrecision(
       parseInt(localStorage.getItem("temperaturePrecision")) || 60
@@ -45,14 +46,12 @@ export default function Home({
     );
 
     // Cleanup the interval when the component unmounts
-    return () => clearInterval(intervalId);
   }, []); // Empty dependency array ensures the effect runs only once on mount
 
   useEffect(() => {
     // console.log(temperaturePrecision, humidityPrecision);
     localStorage.setItem("temperaturePrecision", temperaturePrecision);
     localStorage.setItem("humidityPrecision", humidityPrecision);
-    console.log(window.location.search);
     if (
       !window.location.search.includes("tp") ||
       (window.location.search !== "?tp=" + temperaturePrecision &&
@@ -167,14 +166,6 @@ export default function Home({
 
       <h1 className="text-slate-300 mt-4 mb-2 text-3xl">Temperature</h1>
 
-      <h1 className="text-slate-300 mt-4 mb-2 text-2xl">
-        Sensor 1 (Living room){" "}
-        {sensor1 &&
-          sensor1.length &&
-          sensor1 &&
-          sensor1[0].temperature.toFixed(2)}
-        °C
-      </h1>
       <div className="flex mb-2">
         <button
           onClick={() => setTemperaturePrecision(1440)}
@@ -215,157 +206,56 @@ export default function Home({
           {tempBarMode ? "Line" : "Bar"}
         </button>
       </div>
-      <Graph
-        mode={tempBarMode}
-        dataset={sensor1}
+
+      <NewChart
         precision={temperaturePrecision}
-        scale={"time"}
+        namespace="climate_sensor_1"
+        label="Sensor 1 (Living Room)"
         valueName="temperature"
+        unit="°C"
         colorRgb="255, 99, 132"
-        // dayMode
       />
-
-      <h1 className="text-slate-300 mt-4 mb-2 text-2xl">
-        Sensor 2 (Upstairs){" "}
-        {sensor2 && sensor2.length && sensor2[0].temperature.toFixed(2)}°C
-      </h1>
-      <Graph
-        mode={tempBarMode}
-        dataset={sensor2}
+      <NewChart
         precision={temperaturePrecision}
-        scale={"time"}
+        namespace="climate_sensor_2"
+        label="Sensor 2 (Upstairs)"
         valueName="temperature"
+        unit="°C"
         colorRgb="255, 99, 132"
-        // dayMode
       />
-      <h1 className="text-slate-300 mt-4 mb-2 text-2xl">
-        Sensor 3 (Outside){" "}
-        {sensor3 && sensor3.length && sensor3[0].temperature.toFixed(2)}°C
-      </h1>
-      <Graph
-        mode={tempBarMode}
-        dataset={sensor3}
+      <NewChart
         precision={temperaturePrecision}
-        scale={"time"}
+        namespace="climate_sensor_3"
+        label="Sensor 3 (Outside)"
         valueName="temperature"
+        unit="°C"
         colorRgb="255, 99, 132"
-        // dayMode
-      />
-      <h1 className="text-slate-300 mt-4 mb-2 text-2xl">
-        Average daily temperature
-      </h1>
-      <Graph
-        mode={tempBarMode}
-        dataset={aggregated_data}
-        precision={1000}
-        scale={"time"}
-        valueName="temperature"
-        colorRgb="255, 99, 132"
-        labelOverride="Aggregated Temperature"
-        // dayMode
       />
 
-      <h1 className="text-slate-300 mt-4 mb-2 text-3xl">Humidity</h1>
-
-      <h1 className="text-slate-300 mt-4 mb-2 text-2xl">
-        Sensor 1 (Living room){" "}
-        {sensor1 && sensor1.length && sensor1[0].humidity.toFixed(2)}%
-      </h1>
-      <div className="flex mb-2">
-        <button
-          onClick={() => setHumidityPrecision(1440)}
-          className={`border py-1 w-12 ${
-            humidityPrecision === 1440 ? "font-bold" : ""
-          }`}
-        >
-          24h
-        </button>
-        <button
-          onClick={() => setHumidityPrecision(120)}
-          className={`border py-1 w-12 ${
-            humidityPrecision === 120 ? "font-bold" : ""
-          }`}
-        >
-          2h
-        </button>
-        <button
-          onClick={() => setHumidityPrecision(60)}
-          className={`border py-1 w-12 ${
-            humidityPrecision === 60 ? "font-bold" : ""
-          }`}
-        >
-          1h
-        </button>
-        <button
-          onClick={() => setHumidityPrecision(10)}
-          className={`border py-1 w-12 ${
-            humidityPrecision === 10 ? "font-bold" : ""
-          }`}
-        >
-          10m
-        </button>
-        <button
-          onClick={() => setHumbarMode(!humbarMode)}
-          className={`border py-1 w-12`}
-        >
-          {tempBarMode ? "Line" : "Bar"}
-        </button>
-      </div>
-
-      <Graph
-        mode={humbarMode}
-        dataset={sensor1}
-        scale={"time"}
-        precision={humidityPrecision}
+      <NewChart
+        precision={temperaturePrecision}
+        namespace="climate_sensor_1"
+        label="Sensor 1 (Living Room)"
         valueName="humidity"
+        unit="%"
         colorRgb="51, 153, 255"
-        // dayMode
       />
-      <h1 className="text-slate-300 mt-4 mb-2 text-2xl">
-        Sensor 2 (Upstairs){" "}
-        {sensor2 && sensor2.length && sensor2[0].humidity.toFixed(2)}%
-      </h1>
-      <Graph
-        mode={humbarMode}
-        dataset={sensor2}
-        scale={"time"}
-        precision={humidityPrecision}
+      <NewChart
+        precision={temperaturePrecision}
+        namespace="climate_sensor_2"
+        label="Sensor 2 (Upstairs)"
         valueName="humidity"
+        unit="%"
         colorRgb="51, 153, 255"
-        // dayMode
       />
-      <h1 className="text-slate-300 mt-4 mb-2 text-2xl">
-        Sensor 3 (Outside){" "}
-        {sensor3 && sensor3.length && sensor3[0].humidity.toFixed(2)}%
-      </h1>
-      <Graph
-        mode={humbarMode}
-        dataset={sensor3}
-        scale={"time"}
-        precision={humidityPrecision}
+      <NewChart
+        precision={temperaturePrecision}
+        namespace="climate_sensor_3"
+        label="Sensor 3 (Outside)"
         valueName="humidity"
+        unit="%"
         colorRgb="51, 153, 255"
-        // dayMode
       />
-      {/* {cum_data.length > 0 && (
-        <>
-          <div className="flex mb-2">
-            <button onClick={() => addCum()} className={`border py-1 w-12`}>
-              Add
-            </button>
-          </div>
-          <Graph
-            mode={humbarMode}
-            dataset={cum_data}
-            scale={"time"}
-            precision={365}
-            valueName="count"
-            colorRgb="51, 153, 255"
-            labelOverride="Pressure release"
-            dayMode
-          />
-        </>
-      )} */}
       {dataValidator(120)}
     </div>
   );
