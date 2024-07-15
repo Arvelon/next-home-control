@@ -20,6 +20,11 @@ export default function Home({ data }) {
 
   useEffect(() => {
     localStorage.setItem("precision", precision);
+    if (
+      !window.location.search.includes("precision") ||
+      (window.location.search !== "?tp=" + precision && precision !== 59)
+    )
+      window.location = "/?precision=" + precision;
   }, [precision]);
 
   // const dataValidator = (fullStack) => {
