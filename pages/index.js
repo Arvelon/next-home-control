@@ -10,7 +10,7 @@ import NewChart from "@/components/new-chart";
 import { fetchSensor, fetchSensors } from "@/services/data-service";
 
 export default function Home({ data }) {
-  const [precision, setPrecision] = useState(60);
+  const [precision, setPrecision] = useState(59);
   const [chartTypeBar, setChartTypeBar] = useState(false);
 
   useEffect(() => {
@@ -22,7 +22,7 @@ export default function Home({ data }) {
     localStorage.setItem("precision", precision);
     if (
       !window.location.search.includes("precision") ||
-      (window.location.search !== "?tp=" + precision && precision !== 59)
+      (window.location.search !== "?precision=" + precision && precision !== 59)
     )
       window.location = "/?precision=" + precision;
   }, [precision]);
