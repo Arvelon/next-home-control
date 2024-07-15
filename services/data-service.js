@@ -1,5 +1,7 @@
-export const fetchSensors = async (precision) => {
-  const url = process.env.NEXT_PUBLIC_HOST + "/ago/" + precision || 10;
+export const fetchSensor = async (namespace, precision) => {
+  const url =
+    process.env.NEXT_PUBLIC_HOST + "/stream/" + namespace + "/" + precision ||
+    10;
   console.log("url: ", url);
 
   // Create headers object with the custom header

@@ -7,18 +7,14 @@ import { AiFillCloseCircle } from "react-icons/ai";
 import CardChart from "@/components/card-chart";
 import { ta } from "date-fns/locale";
 import NewChart from "@/components/new-chart";
+import { fetchSensor, fetchSensors } from "@/services/data-service";
 
-export default function Home({
-  sensor1,
-  sensor2,
-  sensor3,
-  aggregated_data,
-  cum_data,
-}) {
+export default function Home({ data }) {
   const [precision, setPrecision] = useState(60);
   const [chartTypeBar, setChartTypeBar] = useState(false);
 
   useEffect(() => {
+    console.log(data);
     setPrecision(parseInt(localStorage.getItem("precision")) || 60);
   }, []);
 
@@ -26,55 +22,55 @@ export default function Home({
     localStorage.setItem("precision", precision);
   }, [precision]);
 
-  const dataValidator = (fullStack) => {
-    if (!sensor1 || !sensor1.length) return;
-    // These conditions have overlap, but they are executet in the right order so there is no issue
-    const green = sensor1.length == fullStack;
+  // const dataValidator = (fullStack) => {
+  //   if (!sensor1 || !sensor1.length) return;
+  //   // These conditions have overlap, but they are executet in the right order so there is no issue
+  //   const green = sensor1.length == fullStack;
 
-    const yellow =
-      sensor1.length < (fullStack / 4) * 3 || sensor1.length < fullStack; // > 75% && !green
+  //   const yellow =
+  //     sensor1.length < (fullStack / 4) * 3 || sensor1.length < fullStack; // > 75% && !green
 
-    const red = sensor1.length < (fullStack / 4) * 3;
+  //   const red = sensor1.length < (fullStack / 4) * 3;
 
-    const cyan = sensor1.length > fullStack * 1.2;
+  //   const cyan = sensor1.length > fullStack * 1.2;
 
-    return (
-      <div className="flex flex-col w-11/12 mt-4">
-        <p>
-          Stack size:{" "}
-          <span
-            className={
-              cyan
-                ? "text-cyan-500"
-                : green
-                ? "text-green-500"
-                : red
-                ? "text-red-500"
-                : "text-yellow-500"
-            }
-          >
-            {sensor1.length}{" "}
-            {sensor1.length < fullStack
-              ? "(" + ((sensor1.length / 1440) * 100).toFixed(0) + "%)"
-              : ""}
-          </span>
-        </p>
-        <p>
-          Latest datapoint:{" "}
-          <span
-            className={
-              new Date(sensor1[0].timestamp) < subMinutes(new Date(), 2)
-                ? "text-red-500"
-                : "text-green-500"
-            }
-          >
-            {sensor1[0].timestamp}
-          </span>
-        </p>
-        <p>Oldest datapoint: {sensor1[sensor1.length - 1].timestamp}</p>
-      </div>
-    );
-  };
+  //   return (
+  //     <div className="flex flex-col w-11/12 mt-4">
+  //       <p>
+  //         Stack size:{" "}
+  //         <span
+  //           className={
+  //             cyan
+  //               ? "text-cyan-500"
+  //               : green
+  //               ? "text-green-500"
+  //               : red
+  //               ? "text-red-500"
+  //               : "text-yellow-500"
+  //           }
+  //         >
+  //           {sensor1.length}{" "}
+  //           {sensor1.length < fullStack
+  //             ? "(" + ((sensor1.length / 1440) * 100).toFixed(0) + "%)"
+  //             : ""}
+  //         </span>
+  //       </p>
+  //       <p>
+  //         Latest datapoint:{" "}
+  //         <span
+  //           className={
+  //             new Date(sensor1[0].timestamp) < subMinutes(new Date(), 2)
+  //               ? "text-red-500"
+  //               : "text-green-500"
+  //           }
+  //         >
+  //           {sensor1[0].timestamp}
+  //         </span>
+  //       </p>
+  //       <p>Oldest datapoint: {sensor1[sensor1.length - 1].timestamp}</p>
+  //     </div>
+  //   );
+  // };
 
   return (
     <div
@@ -130,7 +126,7 @@ export default function Home({
       ---------------------------------------------------------------- */}
       <NewChart
         precision={precision}
-        namespace="climate_sensor_1"
+        data={data.climate_sensor_1}
         label="Sensor 1 (Living Room)"
         valueName="temperature"
         unit="°C"
@@ -139,7 +135,7 @@ export default function Home({
       />
       <NewChart
         precision={precision}
-        namespace="climate_sensor_2"
+        data={data.climate_sensor_2}
         label="Sensor 2 (Upstairs)"
         valueName="temperature"
         unit="°C"
@@ -148,7 +144,7 @@ export default function Home({
       />
       <NewChart
         precision={precision}
-        namespace="climate_sensor_3"
+        data={data.climate_sensor_3}
         label="Sensor 3 (Outside)"
         valueName="temperature"
         unit="°C"
@@ -157,7 +153,7 @@ export default function Home({
       />
       <NewChart
         precision={precision}
-        namespace="climate_sensor_1"
+        data={data.climate_sensor_1}
         label="Sensor 1 (Living Room)"
         valueName="humidity"
         unit="%"
@@ -166,7 +162,7 @@ export default function Home({
       />
       <NewChart
         precision={precision}
-        namespace="climate_sensor_2"
+        data={data.climate_sensor_2}
         label="Sensor 2 (Upstairs)"
         valueName="humidity"
         unit="%"
@@ -175,92 +171,38 @@ export default function Home({
       />
       <NewChart
         precision={precision}
-        namespace="climate_sensor_3"
+        data={data.climate_sensor_3}
         label="Sensor 3 (Outside)"
         valueName="humidity"
         unit="%"
         colorRgb="51, 153, 255"
         chartTypeBar={chartTypeBar}
       />
-      {dataValidator(120)}
+      {/* {dataValidator(120)} */}
     </div>
   );
 }
-// export const getServerSideProps = async ({ query }) => {
-//   try {
-//     const tp = parseInt(query.tp);
+export const getServerSideProps = async ({ query }) => {
+  const sensors = ["climate_sensor_1", "climate_sensor_2", "climate_sensor_3"];
+  const precision = query.precision || 10;
 
-//     const fetchSince = isNaN(tp) ? 60 : tp;
-//     const url = process.env.HOST + "/ago/" + fetchSince;
-//     console.log("url: ", url);
-//     // Create headers object with the custom header
-//     const headers = new Headers();
-//     headers.append("ngrok-skip-browser-warning", "true");
-//     console.log(url);
-//     // Fetch with custom headers
-//     const res = await fetch(url, {
-//       method: "GET", // or 'POST' or other HTTP methods
-//       headers: headers,
-//     });
-//     const data = await res.json();
+  try {
+    const data = {};
 
-//     // const dataPoints = data.data.filter(
-//     //   (entry) => new Date(entry.timestamp).getTime() > subDays(new Date(), 1)
-//     // );
-
-//     const agg_url = process.env.HOST + "/aggregated/all";
-
-//     // Fetch with custom headers
-//     const agg_res = await fetch(agg_url, {
-//       method: "GET", // or 'POST' or other HTTP methods
-//       headers: headers,
-//     });
-//     const agg_data = await agg_res.json();
-
-//     // const cum_url = process.env.HOST + "/allEjaculationData";
-
-//     // Fetch with custom headers
-//     // const cum_res = await fetch(cum_url, {
-//     //   method: "GET", // or 'POST' or other HTTP methods
-//     //   headers: headers,
-//     // });
-//     // const cum_data = await cum_res.json();
-
-//     // const interpolated_data = []
-//     // cum_data.data.forEach(entry => {
-//     //   const date = new Date(entry.date)
-//     //   const nextDate = addDays(date, 1)
-//     //   console.log(nextDate)
-//     //   console.log(format(nextDate, 'yyyy-MM-dd'))
-//     //   const result = cum_data.data.find(x => x.date === nextDate)
-//     //   if(result) return
-
-//     // })
-
-//     console.log(data);
-//     return {
-//       props: {
-//         sensor1: data.data.sensor1,
-//         sensor2: data.data.sensor2,
-//         sensor3: data.data.sensor3,
-//         aggregated_data: agg_data.data,
-//         // cum_data: cum_data.data,
-//         // temperature,
-//         // humidity,
-//         // smoke,
-//         // ejaculation,
-//         // main,
-//       },
-//       // revalidate: 60
-//     };
-//   } catch (err) {
-//     return {
-//       props: {
-//         sensor1: [],
-//         sensor2: [],
-//         sensor3: [],
-//         aggregated_data: [],
-//       },
-//     };
-//   }
-// };
+    for (const sensor of sensors) {
+      const res = await fetchSensor(sensor, precision);
+      data[sensor] = res.data;
+    }
+    return {
+      props: {
+        data,
+      },
+    };
+  } catch (error) {
+    return {
+      props: {
+        data: error.toString(),
+      },
+    };
+  }
+};
