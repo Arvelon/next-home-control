@@ -216,7 +216,7 @@ export const getServerSideProps = async ({ query }) => {
     "climate_sensor_1",
     "climate_sensor_2",
     "climate_sensor_3",
-    "esp32_002",
+    "esp32_001",
   ];
   const precision = query.precision || 10;
 
