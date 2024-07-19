@@ -11,7 +11,7 @@ export default function Overview({ data }) {
                 <div key={key} className="border border-slate-500 m-1">
                   <p className="text-center mt-4 font-semibold">{sensor}</p>
 
-                  <div className="flex-col justify-center items-center">
+                  <div className="flex flex-col md:flex-row justify-center items-center">
                     <div className="m-4 text-2xl text-red-400">
                       {data[sensor][0].temperature.toFixed(2)}°C
                     </div>
