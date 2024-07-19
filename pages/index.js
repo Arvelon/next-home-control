@@ -216,7 +216,7 @@ export const getServerSideProps = async ({ query }) => {
     "climate_sensor_1",
     "climate_sensor_2",
     "climate_sensor_3",
-    "esp32_001",
+    "esp32_002",
   ];
   const precision = query.precision || 10;
 
@@ -225,7 +225,12 @@ export const getServerSideProps = async ({ query }) => {
 
     for (const sensor of sensors) {
       const res = await fetchSensor(sensor, precision);
-      data[sensor] = res.data;
+
+      if (res && res.data) {
+        data[sensor] = res.data;
+      } else {
+        data[sensor] = [];
+      }
     }
     return {
       props: {
