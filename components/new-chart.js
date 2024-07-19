@@ -93,7 +93,7 @@ export default function NewChart({
     return { data: chartData, options };
   }, [data, precision, scale, valueName, dayMode, colorRgb]);
 
-  if (!chartData) {
+  if (!chartData || !chartData.data.datasets[0].data[0]) {
     return (
       <div className="w-11/12 h-96 border-2 border-dashed border-slate-400 opacity-75 my-16 flex items-center">
         <p className="text-2xl text-center w-full">
@@ -111,7 +111,7 @@ export default function NewChart({
         <span>
           {chartData &&
             chartData.data &&
-            chartData.data.datasets[0].data[0].toFixed(2)}
+            chartData.data.datasets[0].data[0]?.toFixed(2)}
           {unit ?? ""}
         </span>
       </h1>

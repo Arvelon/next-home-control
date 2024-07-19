@@ -17,10 +17,10 @@ export default function Overview({ data }) {
 
                   <div className="flex flex-col md:flex-row justify-center items-center">
                     <div className="m-4 text-2xl text-red-400">
-                      {data[sensor.namespace][0].temperature.toFixed(2)}°C
+                      {data[sensor.namespace][0]?.temperature.toFixed(2)}°C
                     </div>
                     <div className="m-4 text-2xl text-blue-400">
-                      {data[sensor.namespace][0].humidity.toFixed(2)}%
+                      {data[sensor.namespace][0]?.humidity.toFixed(2)}%
                     </div>
                   </div>
                 </div>

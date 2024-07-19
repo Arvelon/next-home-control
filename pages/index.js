@@ -254,6 +254,8 @@ export const getServerSideProps = async ({ query }) => {
     for (const sensor of sensors) {
       const res = await fetchSensor(sensor, precision);
 
+      console.log(res);
+
       if (res && res.data) {
         data[sensor] = res.data;
       } else {
