@@ -129,6 +129,8 @@ export default function Home({ data }) {
         chartTypeBar={chartTypeBar}
       />
       ---------------------------------------------------------------- */}
+
+      {/* TEMPERATURE CHARTS */}
       <NewChart
         precision={precision}
         data={data.climate_sensor_1}
@@ -158,6 +160,19 @@ export default function Home({ data }) {
       />
       <NewChart
         precision={precision}
+        data={data.esp32_001}
+        label="ESP32 001 "
+        valueName="temperature"
+        unit="%"
+        colorRgb="255, 99, 132"
+        chartTypeBar={chartTypeBar}
+      />
+
+      {/* HUMIDITY CHARTS */}
+      <h1 className="text-slate-300 mt-4 mb-2 text-3xl">Humidity</h1>
+
+      <NewChart
+        precision={precision}
         data={data.climate_sensor_1}
         label="Sensor 1 (Living Room)"
         valueName="humidity"
@@ -178,6 +193,15 @@ export default function Home({ data }) {
         precision={precision}
         data={data.climate_sensor_3}
         label="Sensor 3 (Outside)"
+        valueName="humidity"
+        unit="%"
+        colorRgb="51, 153, 255"
+        chartTypeBar={chartTypeBar}
+      />
+      <NewChart
+        precision={precision}
+        data={data.esp32_001}
+        label="ESP32 001 "
         valueName="humidity"
         unit="%"
         colorRgb="51, 153, 255"
@@ -188,7 +212,12 @@ export default function Home({ data }) {
   );
 }
 export const getServerSideProps = async ({ query }) => {
-  const sensors = ["climate_sensor_1", "climate_sensor_2", "climate_sensor_3"];
+  const sensors = [
+    "climate_sensor_1",
+    "climate_sensor_2",
+    "climate_sensor_3",
+    "esp32_001",
+  ];
   const precision = query.precision || 10;
 
   try {
