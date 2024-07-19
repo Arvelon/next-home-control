@@ -2,7 +2,7 @@ export default function Overview({ data }) {
   return (
     <>
       {typeof data === "object" ? (
-        <div className="w-11/12 flex flex-col items-center pb-20">
+        <div className="w-11/12 flex flex-col items-center md:pb-16">
           <h1 className="text-slate-300 mt-4 mb-2 text-3xl">Overview</h1>
 
           <div className="grid grid-cols-2 mb-20 mt-4 w-full">
