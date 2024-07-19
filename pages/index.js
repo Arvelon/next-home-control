@@ -8,6 +8,7 @@ import CardChart from "@/components/card-chart";
 import { ta } from "date-fns/locale";
 import NewChart from "@/components/new-chart";
 import { fetchSensor, fetchSensors } from "@/services/data-service";
+import Overview from "@/components/overview";
 
 export default function Home({ data }) {
   const [precision, setPrecision] = useState(59);
@@ -84,6 +85,9 @@ export default function Home({ data }) {
       <div className="absolute right-0 px-2 py-1">
         {process.env.NEXT_PUBLIC_APP_VERSION || "-"}
       </div>
+
+      <Overview data={data} />
+
       <h1 className="text-slate-300 mt-4 mb-2 text-3xl">Temperature</h1>
       <div className="flex mb-2">
         <button
