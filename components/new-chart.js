@@ -109,7 +109,9 @@ export default function NewChart({
       <h1 className="text-slate-300 mt-4 mb-2 text-2xl flex justify-between pr-3">
         <span>{label}</span>
         <span>
-          {chartData.data.datasets[0].data[0].toFixed(2)}
+          {chartData &&
+            chartData.data &&
+            chartData.data.datasets[0].data[0].toFixed(2)}
           {unit ?? ""}
         </span>
       </h1>
