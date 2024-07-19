@@ -1,3 +1,5 @@
+import { sensors } from "@/config/runtimesettings";
+
 export default function Overview({ data }) {
   return (
     <>
@@ -6,17 +8,19 @@ export default function Overview({ data }) {
           <h1 className="text-slate-300 mt-4 mb-2 text-3xl">Overview</h1>
 
           <div className="grid grid-cols-2 mb-20 mt-4 w-full">
-            {Object.keys(data).map((sensor, key) => {
+            {sensors.map((sensor, key) => {
               return (
                 <div key={key} className="border border-slate-500 m-1">
-                  <p className="text-center mt-4 font-semibold">{sensor}</p>
+                  <p className="text-center mt-4 font-semibold">
+                    {sensor.label}
+                  </p>
 
                   <div className="flex flex-col md:flex-row justify-center items-center">
                     <div className="m-4 text-2xl text-red-400">
-                      {data[sensor][0].temperature.toFixed(2)}°C
+                      {data[sensor.namespace][0].temperature.toFixed(2)}°C
                     </div>
                     <div className="m-4 text-2xl text-blue-400">
-                      {data[sensor][0].humidity.toFixed(2)}%
+                      {data[sensor.namespace][0].humidity.toFixed(2)}%
                     </div>
                   </div>
                 </div>

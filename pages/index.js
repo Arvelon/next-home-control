@@ -9,6 +9,7 @@ import { ta } from "date-fns/locale";
 import NewChart from "@/components/new-chart";
 import { fetchSensor, fetchSensors } from "@/services/data-service";
 import Overview from "@/components/overview";
+import { sensors } from "@/config/runtimesettings";
 
 export default function Home({ data }) {
   const [precision, setPrecision] = useState(59);
@@ -135,7 +136,19 @@ export default function Home({ data }) {
       ---------------------------------------------------------------- */}
 
       {/* TEMPERATURE CHARTS */}
-      <NewChart
+      {sensors.map((sensor, key) => (
+        <NewChart
+          key={key}
+          precision={precision}
+          data={data[sensor.namespace]}
+          label={sensor.label}
+          valueName="temperature"
+          unit="°C"
+          colorRgb="255, 99, 132"
+          chartTypeBar={chartTypeBar}
+        />
+      ))}
+      {/* <NewChart
         precision={precision}
         data={data.climate_sensor_1}
         label="Sensor 1 (Living Room)"
@@ -170,12 +183,23 @@ export default function Home({ data }) {
         unit="%"
         colorRgb="255, 99, 132"
         chartTypeBar={chartTypeBar}
-      />
+      /> */}
 
       {/* HUMIDITY CHARTS */}
       <h1 className="text-slate-300 mt-4 mb-2 text-3xl">Humidity</h1>
-
-      <NewChart
+      {sensors.map((sensor, key) => (
+        <NewChart
+          key={key}
+          precision={precision}
+          data={data[sensor.namespace]}
+          label={sensor.label}
+          valueName="humidity"
+          unit="°C"
+          colorRgb="51, 153, 255"
+          chartTypeBar={chartTypeBar}
+        />
+      ))}
+      {/* <NewChart
         precision={precision}
         data={data.climate_sensor_1}
         label="Sensor 1 (Living Room)"
@@ -210,7 +234,7 @@ export default function Home({ data }) {
         unit="%"
         colorRgb="51, 153, 255"
         chartTypeBar={chartTypeBar}
-      />
+      /> */}
       {/* {dataValidator(120)} */}
     </div>
   );
