@@ -8,7 +8,7 @@ export const sensors = [
     namespace: "climate_sensor_2",
   },
   {
-    label: "Sensor 3 (Outside))",
+    label: "Sensor 3 (Outside)",
     namespace: "climate_sensor_3",
   },
   {

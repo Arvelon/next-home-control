@@ -10,12 +10,19 @@ export default function Overview({ data }) {
           <div className="grid grid-cols-2 mb-20 mt-4 w-full">
             {sensors.map((sensor, key) => {
               return (
-                <div key={key} className="border border-slate-500 m-1">
-                  <p className="text-center mt-4 font-semibold">
-                    {sensor.label}
+                <div key={key} className="border border-slate-500 m-1 py-3">
+                  <p className="h-1/3 text-center font-semibold">
+                    {sensor.label.includes("(") ? (
+                      <>
+                        <p>{sensor.label.split("(")[0]}</p>
+                        <p>({sensor.label.split("(")[1]}</p>
+                      </>
+                    ) : (
+                      <p>{sensor.label}</p>
+                    )}
                   </p>
 
-                  <div className="flex flex-col md:flex-row justify-center items-center">
+                  <div className="h-2/3 flex flex-col md:flex-row justify-between md:justify-center items-center">
                     <div className="m-4 text-2xl text-red-400">
                       {data[sensor.namespace][0]?.temperature.toFixed(2)}°C
                     </div>
