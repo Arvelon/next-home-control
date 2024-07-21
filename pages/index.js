@@ -89,7 +89,7 @@ export default function Home({ data }) {
 
       <Overview data={data} />
 
-      <h1 className="text-slate-300 mt-4 mb-2 text-3xl">Temperature</h1>
+      <h1 className="text-slate-300 mt-4 mb-4 text-3xl">Temperature</h1>
       <div className="flex mb-2">
         <button
           onClick={() => setPrecision(1440)}
@@ -186,7 +186,7 @@ export default function Home({ data }) {
       /> */}
 
       {/* HUMIDITY CHARTS */}
-      <h1 className="text-slate-300 mt-4 mb-2 text-3xl">Humidity</h1>
+      <h1 className="text-slate-300 mt-20 mb-2 text-3xl">Humidity</h1>
       {sensors.map((sensor, key) => (
         <NewChart
           key={key}

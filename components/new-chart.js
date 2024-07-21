@@ -104,6 +104,16 @@ export default function NewChart({
     );
   }
 
+  const isOutOfSync = () => {
+    if (!data) return true;
+    const lastTimestamp = data[0].timestamp;
+    if (lastTimestamp < new Date().getTime() - 300_000) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
   return (
     <div className="h-48 w-11/12 flex-col justify-center my-10">
       <h1 className="text-slate-300 mt-4 mb-2 text-2xl flex justify-between pr-3">
@@ -114,6 +124,7 @@ export default function NewChart({
             chartData.data.datasets[0].data[0]?.toFixed(2)}
           {unit ?? ""}
         </span>
+        <span>{isOutOfSync() ? "out of sync" : "good"}</span>
       </h1>
       {!chartTypeBar ? (
         <Line options={chartData.options} data={chartData.data} />

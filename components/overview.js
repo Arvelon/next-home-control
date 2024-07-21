@@ -4,14 +4,14 @@ export default function Overview({ data }) {
   return (
     <>
       {typeof data === "object" ? (
-        <div className="w-11/12 flex flex-col items-center md:pb-16">
-          <h1 className="text-slate-300 mt-4 mb-2 text-3xl">Overview</h1>
+        <div className="w-11/12 flex flex-col items-center md:pb-10">
+          <h1 className="text-slate-300 mt-8 mb-2 text-3xl">Overview</h1>
 
-          <div className="grid grid-cols-2 mb-20 mt-4 w-full">
+          <div className="grid grid-cols-2 mt-4 w-full">
             {sensors.map((sensor, key) => {
               return (
                 <div key={key} className="border border-slate-500 m-1 py-3">
-                  <p className="h-1/3 text-center font-semibold">
+                  <p className="text-center font-semibold mb-1">
                     {sensor.label.includes("(") ? (
                       <>
                         <p>{sensor.label.split("(")[0]}</p>
@@ -22,11 +22,11 @@ export default function Overview({ data }) {
                     )}
                   </p>
 
-                  <div className="h-2/3 flex flex-col md:flex-row justify-between md:justify-center items-center">
-                    <div className="m-4 text-2xl text-red-400">
+                  <div className="flex justify-between md:justify-center items-center px-3">
+                    <div className="m-0 text-lg text-red-400 md:px-4">
                       {data[sensor.namespace][0]?.temperature.toFixed(2)}°C
                     </div>
-                    <div className="m-4 text-2xl text-blue-400">
+                    <div className="m-0 text-lg text-blue-400 md:px-4">
                       {data[sensor.namespace][0]?.humidity.toFixed(2)}%
                     </div>
                   </div>
