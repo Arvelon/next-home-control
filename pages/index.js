@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { TbAlertHexagonFilled } from "react-icons/tb";
 import Graph from "../components/chart";
 import { addDays, format, formatDistance, subDays, subMinutes } from "date-fns";
 import { addValue, getValue, setValue } from "@/config/firebase";
@@ -14,10 +14,16 @@ import { sensors } from "@/config/runtimesettings";
 export default function Home({ data }) {
   const [precision, setPrecision] = useState(59);
   const [chartTypeBar, setChartTypeBar] = useState(false);
+  const [showOutOfSync, setShowOutOfSync] = useState(false);
+
+  const lastUpdated = new Date().getTime();
 
   useEffect(() => {
-    console.log(data);
     setPrecision(parseInt(localStorage.getItem("precision")) || 60);
+
+    setInterval(() => {
+      checkOutOfSync();
+    }, 30000);
   }, []);
 
   useEffect(() => {
@@ -29,55 +35,11 @@ export default function Home({ data }) {
       window.location = "/?precision=" + precision;
   }, [precision]);
 
-  // const dataValidator = (fullStack) => {
-  //   if (!sensor1 || !sensor1.length) return;
-  //   // These conditions have overlap, but they are executet in the right order so there is no issue
-  //   const green = sensor1.length == fullStack;
-
-  //   const yellow =
-  //     sensor1.length < (fullStack / 4) * 3 || sensor1.length < fullStack; // > 75% && !green
-
-  //   const red = sensor1.length < (fullStack / 4) * 3;
-
-  //   const cyan = sensor1.length > fullStack * 1.2;
-
-  //   return (
-  //     <div className="flex flex-col w-11/12 mt-4">
-  //       <p>
-  //         Stack size:{" "}
-  //         <span
-  //           className={
-  //             cyan
-  //               ? "text-cyan-500"
-  //               : green
-  //               ? "text-green-500"
-  //               : red
-  //               ? "text-red-500"
-  //               : "text-yellow-500"
-  //           }
-  //         >
-  //           {sensor1.length}{" "}
-  //           {sensor1.length < fullStack
-  //             ? "(" + ((sensor1.length / 1440) * 100).toFixed(0) + "%)"
-  //             : ""}
-  //         </span>
-  //       </p>
-  //       <p>
-  //         Latest datapoint:{" "}
-  //         <span
-  //           className={
-  //             new Date(sensor1[0].timestamp) < subMinutes(new Date(), 2)
-  //               ? "text-red-500"
-  //               : "text-green-500"
-  //           }
-  //         >
-  //           {sensor1[0].timestamp}
-  //         </span>
-  //       </p>
-  //       <p>Oldest datapoint: {sensor1[sensor1.length - 1].timestamp}</p>
-  //     </div>
-  //   );
-  // };
+  const checkOutOfSync = () => {
+    if (lastUpdated < new Date().getTime() - 300_000) {
+      setShowOutOfSync(true);
+    }
+  };
 
   return (
     <div
@@ -86,6 +48,16 @@ export default function Home({ data }) {
       <div className="absolute right-0 px-2 py-1">
         {process.env.NEXT_PUBLIC_APP_VERSION || "-"}
       </div>
+
+      {showOutOfSync && (
+        <div className="absolute top-0 left-0 w-full h-screen bg-black bg-opacity-60 flex flex-col justify-center items-center">
+          <TbAlertHexagonFilled
+            className="text-red-500 text-9xl hover:text-red-950 cursor-pointer"
+            onClick={() => window.location.reload()}
+          />
+          <p className="text-3xl mt-2">Out of sync</p>
+        </div>
+      )}
 
       <Overview data={data} />
 
@@ -253,8 +225,6 @@ export const getServerSideProps = async ({ query }) => {
 
     for (const sensor of sensors) {
       const res = await fetchSensor(sensor, precision);
-
-      console.log(res);
 
       if (res && res.data) {
         data[sensor] = res.data;

@@ -1,6 +1,7 @@
 import { sensors } from "@/config/runtimesettings";
 
 export default function Overview({ data }) {
+  console.log("Overview");
   return (
     <>
       {typeof data === "object" ? (
