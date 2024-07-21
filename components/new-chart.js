@@ -95,7 +95,7 @@ export default function NewChart({
 
   if (!chartData || !chartData.data.datasets[0].data[0]) {
     return (
-      <div className="w-11/12 h-96 border-2 border-dashed border-slate-400 opacity-75 my-16 flex items-center">
+      <div className="w-11/12 h-48 border-2 border-dashed border-slate-400 opacity-75 my-16 flex items-center">
         <p className="text-2xl text-center w-full">
           {label} [
           <span className="text-red-500 uppercase font-semibold">offline</span>]
@@ -105,7 +105,7 @@ export default function NewChart({
   }
 
   return (
-    <div className="h-72 w-11/12 flex-col justify-center my-10">
+    <div className="h-48 w-11/12 flex-col justify-center my-10">
       <h1 className="text-slate-300 mt-4 mb-2 text-2xl flex justify-between pr-3">
         <span>{label}</span>
         <span>
