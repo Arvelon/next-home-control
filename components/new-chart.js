@@ -12,6 +12,7 @@ import {
 } from "chart.js";
 import { Bar, Line } from "react-chartjs-2";
 import { useMemo } from "react";
+import { TbAlertHexagonFilled } from "react-icons/tb";
 
 ChartJS.register(
   CategoryScale,
@@ -118,13 +119,24 @@ export default function NewChart({
     <div className="h-48 w-11/12 flex-col justify-center my-10">
       <h1 className="text-slate-300 mt-4 mb-2 text-2xl flex justify-between pr-3">
         <span>{label}</span>
-        <span>
-          {chartData &&
-            chartData.data &&
-            chartData.data.datasets[0].data[0]?.toFixed(2)}
-          {unit ?? ""}
-        </span>
-        <span>{isOutOfSync() ? "out of sync" : "good"}</span>
+        <div className="flex items-center">
+          <span>
+            {isOutOfSync() ? (
+              <span className="flex items-center mr-2">
+                <span className="text-sm text-red-500 mr-2">OUT OF SYNC</span>
+                <TbAlertHexagonFilled className="text-red-500" />
+              </span>
+            ) : (
+              ""
+            )}
+          </span>
+          <span>
+            {chartData &&
+              chartData.data &&
+              chartData.data.datasets[0].data[0]?.toFixed(2)}
+            {unit ?? ""}
+          </span>
+        </div>
       </h1>
       {!chartTypeBar ? (
         <Line options={chartData.options} data={chartData.data} />
