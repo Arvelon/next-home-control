@@ -140,7 +140,10 @@ export default function NewChart({
       <div className="w-11/12 h-48 border-2 border-dashed border-slate-400 opacity-75 my-16 flex items-center">
         <p className="text-2xl text-center w-full">
           {label} [
-          <span className="text-red-500 uppercase font-semibold">offline</span>]
+          <span className="text-red-500 uppercase font-semibold">
+            waiting for data
+          </span>
+          ]
         </p>
       </div>
     );

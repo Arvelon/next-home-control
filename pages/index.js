@@ -1,5 +1,5 @@
 import { TbAlertHexagonFilled } from "react-icons/tb";
-import Graph from "../components/chart";
+import { FaPlay } from "react-icons/fa";
 import { addDays, format, formatDistance, subDays, subMinutes } from "date-fns";
 import { addValue, getValue, setValue } from "@/config/firebase";
 import { useEffect, useState } from "react";
@@ -25,23 +25,7 @@ export default function Home({ data }) {
     setInterval(() => {
       checkOutOfSync();
     }, 30000);
-
-    // dataStorage();
   }, []);
-
-  const dataStorage = () => {
-    const stamps = [];
-    Object.entries(data).forEach((sensor) => {
-      if (!sensor[1][0]) return;
-      stamps.push(new Date(sensor[1][0].timestamp).getTime());
-    });
-    localStorage.setItem("historical:timestamp", stamps[0]);
-    localStorage.setItem("historical:data", JSON.stringify(data));
-
-    const precision = stamps[0];
-
-    window.location = "/?precision=" + precision;
-  };
 
   useEffect(() => {
     localStorage.setItem("precision", precision);
@@ -83,35 +67,49 @@ export default function Home({ data }) {
         <button
           onClick={() => setPrecision(1440)}
           className={`border py-1 w-12 ${
-            precision === 1440 ? "font-bold" : ""
+            precision === 1440 ? "bg-slate-200 text-black" : ""
           }`}
         >
           24h
         </button>
         <button
           onClick={() => setPrecision(120)}
-          className={`border py-1 w-12 ${precision === 120 ? "font-bold" : ""}`}
+          className={`border py-1 w-12 ${
+            precision === 120 ? "bg-slate-200 text-black" : ""
+          }`}
         >
           2h
         </button>
         <button
           onClick={() => setPrecision(60)}
-          className={`border py-1 w-12 ${precision === 60 ? "font-bold" : ""}`}
+          className={`border py-1 w-12 ${
+            precision === 60 ? "bg-slate-200 text-black" : ""
+          }`}
         >
           1h
         </button>
         <button
           onClick={() => setPrecision(10)}
-          className={`border py-1 w-12 ${precision === 10 ? "font-bold" : ""}`}
+          className={`border py-1 w-12 ${
+            precision === 10 ? "bg-slate-200 text-black" : ""
+          }`}
         >
           10m
         </button>
         <button
+          onClick={() => setPrecision(1)}
+          className={`border py-1 w-12 flex justify-center items-center ${
+            precision === 1 ? "bg-slate-200 text-black" : ""
+          }`}
+        >
+          <FaPlay />
+        </button>
+        {/* <button
           onClick={() => setChartTypeBar(!chartTypeBar)}
           className={`border py-1 w-12`}
         >
           {chartTypeBar ? "Line" : "Bar"}
-        </button>
+        </button> */}
       </div>
 
       {/* TEMPERATURE CHARTS */}
