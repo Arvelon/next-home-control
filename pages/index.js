@@ -10,6 +10,8 @@ import NewChart from "@/components/new-chart";
 import { fetchSensor, fetchSensors } from "@/services/data-service";
 import Overview from "@/components/overview";
 import { sensors } from "@/config/runtimesettings";
+import socket from "@/services/socket";
+import _ from "lodash";
 
 export default function Home({ data }) {
   const [precision, setPrecision] = useState(59);
@@ -96,16 +98,6 @@ export default function Home({ data }) {
           {chartTypeBar ? "Line" : "Bar"}
         </button>
       </div>
-      {/* <NewChart
-        precision={precision}
-        namespace="aggregated_data"
-        label="Aggregated 1 test"
-        valueName="temperature"
-        unit="°C"
-        colorRgb="0, 200, 100"
-        chartTypeBar={chartTypeBar}
-      />
-      ---------------------------------------------------------------- */}
 
       {/* TEMPERATURE CHARTS */}
       {sensors.map((sensor, key) => (
@@ -114,48 +106,13 @@ export default function Home({ data }) {
           precision={precision}
           data={data[sensor.namespace]}
           label={sensor.label}
+          device={sensor.namespace}
           valueName="temperature"
           unit="°C"
           colorRgb="255, 99, 132"
           chartTypeBar={chartTypeBar}
         />
       ))}
-      {/* <NewChart
-        precision={precision}
-        data={data.climate_sensor_1}
-        label="Sensor 1 (Living Room)"
-        valueName="temperature"
-        unit="°C"
-        colorRgb="255, 99, 132"
-        chartTypeBar={chartTypeBar}
-      />
-      <NewChart
-        precision={precision}
-        data={data.climate_sensor_2}
-        label="Sensor 2 (Upstairs)"
-        valueName="temperature"
-        unit="°C"
-        colorRgb="255, 99, 132"
-        chartTypeBar={chartTypeBar}
-      />
-      <NewChart
-        precision={precision}
-        data={data.climate_sensor_3}
-        label="Sensor 3 (Outside)"
-        valueName="temperature"
-        unit="°C"
-        colorRgb="255, 99, 132"
-        chartTypeBar={chartTypeBar}
-      />
-      <NewChart
-        precision={precision}
-        data={data.esp32_001}
-        label="ESP32 001 "
-        valueName="temperature"
-        unit="%"
-        colorRgb="255, 99, 132"
-        chartTypeBar={chartTypeBar}
-      /> */}
 
       {/* HUMIDITY CHARTS */}
       <h1 className="text-slate-300 mt-20 mb-2 text-3xl">Humidity</h1>
@@ -165,49 +122,13 @@ export default function Home({ data }) {
           precision={precision}
           data={data[sensor.namespace]}
           label={sensor.label}
+          device={sensor.namespace}
           valueName="humidity"
           unit="°C"
           colorRgb="51, 153, 255"
           chartTypeBar={chartTypeBar}
         />
       ))}
-      {/* <NewChart
-        precision={precision}
-        data={data.climate_sensor_1}
-        label="Sensor 1 (Living Room)"
-        valueName="humidity"
-        unit="%"
-        colorRgb="51, 153, 255"
-        chartTypeBar={chartTypeBar}
-      />
-      <NewChart
-        precision={precision}
-        data={data.climate_sensor_2}
-        label="Sensor 2 (Upstairs)"
-        valueName="humidity"
-        unit="%"
-        colorRgb="51, 153, 255"
-        chartTypeBar={chartTypeBar}
-      />
-      <NewChart
-        precision={precision}
-        data={data.climate_sensor_3}
-        label="Sensor 3 (Outside)"
-        valueName="humidity"
-        unit="%"
-        colorRgb="51, 153, 255"
-        chartTypeBar={chartTypeBar}
-      />
-      <NewChart
-        precision={precision}
-        data={data.esp32_001}
-        label="ESP32 001 "
-        valueName="humidity"
-        unit="%"
-        colorRgb="51, 153, 255"
-        chartTypeBar={chartTypeBar}
-      /> */}
-      {/* {dataValidator(120)} */}
     </div>
   );
 }

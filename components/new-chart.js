@@ -13,6 +13,8 @@ import {
 import { Bar, Line } from "react-chartjs-2";
 import { useMemo } from "react";
 import { TbAlertHexagonFilled } from "react-icons/tb";
+import { useEffect } from "react";
+import socket from "@/services/socket";
 
 ChartJS.register(
   CategoryScale,

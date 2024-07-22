@@ -1,7 +1,10 @@
 import { sensors } from "@/config/runtimesettings";
+import socket from "@/services/socket";
+import { useEffect } from "react";
 
 export default function Overview({ data }) {
   console.log("Overview");
+
   return (
     <>
       {typeof data === "object" ? (
@@ -12,7 +15,7 @@ export default function Overview({ data }) {
             {sensors.map((sensor, key) => {
               return (
                 <div key={key} className="border border-slate-500 m-1 py-3">
-                  <p className="text-center font-semibold mb-1">
+                  <div className="text-center font-semibold mb-1">
                     {sensor.label.includes("(") ? (
                       <>
                         <p>{sensor.label.split("(")[0]}</p>
@@ -21,7 +24,7 @@ export default function Overview({ data }) {
                     ) : (
                       <p>{sensor.label}</p>
                     )}
-                  </p>
+                  </div>
 
                   <div className="flex justify-between md:justify-center items-center px-3">
                     <div className="m-0 text-lg text-red-400 md:px-4">
