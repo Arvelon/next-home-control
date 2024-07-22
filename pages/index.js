@@ -26,7 +26,23 @@ export default function Home({ data }) {
     setInterval(() => {
       checkOutOfSync();
     }, 30000);
+
+    // dataStorage();
   }, []);
+
+  const dataStorage = () => {
+    const stamps = [];
+    Object.entries(data).forEach((sensor) => {
+      if (!sensor[1][0]) return;
+      stamps.push(new Date(sensor[1][0].timestamp).getTime());
+    });
+    localStorage.setItem("historical:timestamp", stamps[0]);
+    localStorage.setItem("historical:data", JSON.stringify(data));
+
+    const precision = stamps[0];
+
+    window.location = "/?precision=" + precision;
+  };
 
   useEffect(() => {
     localStorage.setItem("precision", precision);
