@@ -2,19 +2,30 @@ import { sensors } from "@/config/runtimesettings";
 import socket from "@/services/socket";
 import { useEffect } from "react";
 
-export default function Overview({ data }) {
+export default function Overview({ data, lightMode }) {
   console.log("Overview");
 
   return (
     <>
       {typeof data === "object" ? (
         <div className="w-11/12 flex flex-col items-center md:pb-10">
-          <h1 className="text-slate-300 mt-8 mb-2 text-3xl">Overview</h1>
+          <h1
+            className={`text-slate-300 mt-4 mb-4 text-3xl ${
+              lightMode ? "text-slate-700" : "text-slate-300"
+            }`}
+          >
+            Overview
+          </h1>
 
           <div className="grid grid-cols-2 mt-4 w-full">
             {sensors.map((sensor, key) => {
               return (
-                <div key={key} className="border border-slate-500 m-1 py-3">
+                <div
+                  key={key}
+                  className={`border m-1 py-3 ${
+                    lightMode ? "border-slate-200" : "border-slate-500"
+                  }`}
+                >
                   <div className="text-center font-semibold mb-1">
                     {sensor.label.includes("(") ? (
                       <>

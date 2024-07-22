@@ -33,6 +33,7 @@ export default function NewChart({
   scale = "linear",
   valueName,
   device,
+  lightMode,
   dayMode = false,
   colorRgb = "51, 153, 255",
   unit,
@@ -151,7 +152,7 @@ export default function NewChart({
 
   const isOutOfSync = () => {
     if (!data) return true;
-    const lastTimestamp = data[0].timestamp;
+    const lastTimestamp = data[0]?.timestamp;
     if (lastTimestamp < new Date().getTime() - 300_000) {
       return true;
     } else {
@@ -161,7 +162,11 @@ export default function NewChart({
 
   return (
     <div className="h-48 w-11/12 flex-col justify-center my-10">
-      <h1 className="text-slate-300 mt-4 mb-2 text-2xl flex justify-between pr-3">
+      <h1
+        className={`mt-4 mb-2 text-2xl flex justify-between pr-3 ${
+          lightMode ? "text-slate-700" : "text-slate-300"
+        }`}
+      >
         <span>{label}</span>
         <div className="flex items-center">
           <span>

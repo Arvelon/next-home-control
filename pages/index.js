@@ -1,7 +1,7 @@
 import { TbAlertHexagonFilled } from "react-icons/tb";
 import { FaPlay } from "react-icons/fa";
 import { addDays, format, formatDistance, subDays, subMinutes } from "date-fns";
-import { addValue, getValue, setValue } from "@/config/firebase";
+import { MdLightMode } from "react-icons/md";
 import { useEffect, useState } from "react";
 import { AiFillCloseCircle } from "react-icons/ai";
 import CardChart from "@/components/card-chart";
@@ -16,11 +16,16 @@ export default function Home({ data }) {
   const [precision, setPrecision] = useState(59);
   const [chartTypeBar, setChartTypeBar] = useState(false);
   const [showOutOfSync, setShowOutOfSync] = useState(false);
+  const [lightMode, setLightMode] = useState(false);
 
   const lastUpdated = new Date().getTime();
 
   useEffect(() => {
     setPrecision(parseInt(localStorage.getItem("precision")) || 60);
+    setLightMode(
+      localStorage.getItem("lightMode") &&
+        localStorage.getItem("lightMode") === "true"
+    );
 
     setInterval(() => {
       checkOutOfSync();
@@ -36,6 +41,10 @@ export default function Home({ data }) {
       window.location = "/?precision=" + precision;
   }, [precision]);
 
+  useEffect(() => {
+    localStorage.setItem("lightMode", lightMode);
+  }, [lightMode]);
+
   const checkOutOfSync = () => {
     if (lastUpdated < new Date().getTime() - 300_000) {
       setShowOutOfSync(true);
@@ -44,7 +53,11 @@ export default function Home({ data }) {
 
   return (
     <div
-      className={`pb-24 flex flex-col items-center bg-slate-950 text-slate-300 `}
+      className={`pb-24 flex flex-col items-center ${
+        lightMode
+          ? "bg-slate-200 text-slate-950"
+          : "bg-slate-950 text-slate-300"
+      }`}
     >
       <div className="absolute right-0 px-2 py-1">
         {process.env.NEXT_PUBLIC_APP_VERSION || "-"}
@@ -60,49 +73,73 @@ export default function Home({ data }) {
         </div>
       )}
 
-      <Overview data={data} />
+      <Overview data={data} lightMode={lightMode} />
 
-      <h1 className="text-slate-300 mt-4 mb-4 text-3xl">Temperature</h1>
-      <div className="flex mb-2">
+      <h1
+        className={`text-slate-300 mt-4 mb-4 text-3xl ${
+          lightMode ? "text-slate-700" : "text-slate-300"
+        }`}
+      >
+        Temperature
+      </h1>
+      <div className="flex mb-2 fixed bottom-0 shadow-md">
         <button
           onClick={() => setPrecision(1440)}
-          className={`border py-1 w-12 ${
-            precision === 1440 ? "bg-slate-200 text-black" : ""
+          className={`border  py-1 w-12 ${
+            precision === 1440
+              ? "bg-slate-200 text-black"
+              : "text-white bg-slate-800"
           }`}
         >
           24h
         </button>
         <button
           onClick={() => setPrecision(120)}
-          className={`border py-1 w-12 ${
-            precision === 120 ? "bg-slate-200 text-black" : ""
+          className={`border  py-1 w-12 ${
+            precision === 120
+              ? "bg-slate-200 text-black"
+              : "text-white bg-slate-800"
           }`}
         >
           2h
         </button>
         <button
           onClick={() => setPrecision(60)}
-          className={`border py-1 w-12 ${
-            precision === 60 ? "bg-slate-200 text-black" : ""
+          className={`border  py-1 w-12 ${
+            precision === 60
+              ? "bg-slate-200 text-black"
+              : "text-white bg-slate-800"
           }`}
         >
           1h
         </button>
         <button
           onClick={() => setPrecision(10)}
-          className={`border py-1 w-12 ${
-            precision === 10 ? "bg-slate-200 text-black" : ""
+          className={`border  py-1 w-12 ${
+            precision === 10
+              ? "bg-slate-200 text-black"
+              : "text-white bg-slate-800"
           }`}
         >
           10m
         </button>
         <button
           onClick={() => setPrecision(1)}
-          className={`border py-1 w-12 flex justify-center items-center ${
-            precision === 1 ? "bg-slate-200 text-black" : ""
+          className={`border  py-1 w-12 flex justify-center items-center ${
+            precision === 1
+              ? "bg-slate-200 text-black"
+              : "text-white bg-slate-800"
           }`}
         >
           <FaPlay />
+        </button>
+        <button
+          onClick={() => setLightMode(!lightMode)}
+          className={`border  py-1 w-12 flex justify-center items-center ${
+            lightMode ? "bg-slate-200 text-black" : "text-white bg-slate-950"
+          }`}
+        >
+          <MdLightMode />
         </button>
         {/* <button
           onClick={() => setChartTypeBar(!chartTypeBar)}
@@ -124,11 +161,18 @@ export default function Home({ data }) {
           unit="°C"
           colorRgb="255, 99, 132"
           chartTypeBar={chartTypeBar}
+          lightMode={lightMode}
         />
       ))}
 
       {/* HUMIDITY CHARTS */}
-      <h1 className="text-slate-300 mt-20 mb-2 text-3xl">Humidity</h1>
+      <h1
+        className={`text-slate-300 mt-4 mb-4 text-3xl ${
+          lightMode ? "text-slate-700" : "text-slate-300"
+        }`}
+      >
+        Humidity
+      </h1>
       {sensors.map((sensor, key) => (
         <NewChart
           key={key}
@@ -140,6 +184,7 @@ export default function Home({ data }) {
           unit="°C"
           colorRgb="51, 153, 255"
           chartTypeBar={chartTypeBar}
+          lightMode={lightMode}
         />
       ))}
     </div>
