@@ -10,7 +10,6 @@ import NewChart from "@/components/new-chart";
 import { fetchSensor, fetchSensors } from "@/services/data-service";
 import Overview from "@/components/overview";
 import { sensors } from "@/config/runtimesettings";
-import socket from "@/services/socket";
 import _ from "lodash";
 
 export default function Home({ data }) {

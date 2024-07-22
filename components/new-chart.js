@@ -11,9 +11,8 @@ import {
   LineElement,
 } from "chart.js";
 import { Bar, Line } from "react-chartjs-2";
-import { useMemo } from "react";
+import { useState, useEffect } from "react";
 import { TbAlertHexagonFilled } from "react-icons/tb";
-import { useEffect } from "react";
 import socket from "@/services/socket";
 
 ChartJS.register(
@@ -33,13 +32,17 @@ export default function NewChart({
   precision,
   scale = "linear",
   valueName,
+  device,
   dayMode = false,
   colorRgb = "51, 153, 255",
   unit,
   chartTypeBar = false,
 }) {
-  const chartData = useMemo(() => {
-    if (!data || !valueName) return null;
+  const [chartData, setChartData] = useState(null);
+  const [socketReady, setSocketReady] = useState(false);
+
+  useEffect(() => {
+    if (!data || !valueName) return;
 
     const temparr =
       scale === "date"
@@ -93,8 +96,44 @@ export default function NewChart({
       },
     };
 
-    return { data: chartData, options };
+    setChartData({ data: chartData, options });
   }, [data, precision, scale, valueName, dayMode, colorRgb]);
+
+  useEffect(() => {
+    if (!chartData) return;
+    // if (socketReady) return;
+    console.log("INIT");
+    // Listen for 'connect' event
+    socket.on("connect", () => {
+      console.log("Connected to the socket");
+    });
+    console.log("init: " + "sensor:" + device);
+    // Listen for custom events (e.g., 'message')
+    socket.on("sensor:" + device, (parameterDto) => {
+      console.log("Message from socket:" + device, parameterDto);
+      pushParameter(parameterDto);
+    });
+    setSocketReady(true);
+
+    // Clean up the effect
+    return () => {
+      socket.off("connect");
+      socket.off("sensor:" + device);
+    };
+  }, [chartData]);
+
+  const pushParameter = (parameter) => {
+    // if (!chartData) return;
+    console.log(parameter);
+    console.log(chartData);
+    const clone = _.cloneDeep(chartData);
+    clone.data.labels.unshift(new Date(parameter.parameter.timestamp));
+    clone.data.datasets[0].data.unshift(
+      parseFloat(parameter.parameter[valueName])
+    );
+    console.log(clone);
+    setChartData(clone);
+  };
 
   if (!chartData || !chartData.data.datasets[0].data[0]) {
     return (
