@@ -1,9 +1,37 @@
 import { sensors } from "@/config/runtimesettings";
-import socket from "@/services/socket";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default function Overview({ data, lightMode }) {
   console.log("Overview");
+
+  const [sensorSettings, setSensorSettings] = useState(undefined);
+
+  useEffect(() => {
+    if (sensorSettings === undefined) return;
+    localStorage.setItem("sensor-settings", JSON.stringify(sensorSettings));
+  }, [sensorSettings]);
+
+  useEffect(() => {
+    if (localStorage.getItem("sensor-settings") !== "undefined") {
+      setSensorSettings(JSON.parse(localStorage.getItem("sensor-settings")));
+    } else {
+      console.log("Sensor Settings nope");
+      let newSettings = {};
+      sensors.forEach(
+        (sensor) => (newSettings[sensor.namespace] = { enabled: true })
+      );
+      setSensorSettings(newSettings);
+    }
+  }, []);
+
+  const toggleChart = (device) => {
+    console.log(sensorSettings);
+    const clone = _.cloneDeep(sensorSettings);
+
+    clone[device].enabled = !clone[device]?.enabled || false;
+    setSensorSettings(clone);
+    console.log(clone);
+  };
 
   return (
     <>
@@ -24,7 +52,15 @@ export default function Overview({ data, lightMode }) {
                   key={key}
                   className={`border m-1 py-3 ${
                     lightMode ? "border-slate-200" : "border-slate-500"
+                  }
+                  ${
+                    sensorSettings &&
+                    sensorSettings[sensor.namespace] &&
+                    sensorSettings[sensor.namespace].enabled
+                      ? ""
+                      : "opacity-50"
                   }`}
+                  onClick={() => toggleChart(sensor.namespace)}
                 >
                   <div className="text-center font-semibold mb-1">
                     {sensor.label.includes("(") ? (

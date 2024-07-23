@@ -41,9 +41,14 @@ export default function NewChart({
 }) {
   const [chartData, setChartData] = useState(null);
   const [socketReady, setSocketReady] = useState(false);
+  const [sensorSettings, setSensorSettings] = useState(undefined);
 
   useEffect(() => {
     if (!data || !valueName) return;
+
+    if (localStorage.getItem("sensor-settings") !== "undefined") {
+      setSensorSettings(JSON.parse(localStorage.getItem("sensor-settings")));
+    }
 
     const temparr =
       scale === "date"
@@ -103,12 +108,12 @@ export default function NewChart({
   useEffect(() => {
     if (!chartData) return;
     // if (socketReady) return;
-    console.log("INIT");
+    // console.log("INIT");
     // Listen for 'connect' event
     socket.on("connect", () => {
       console.log("Connected to the socket");
     });
-    console.log("init: " + "sensor:" + device);
+    // console.log("init: " + "sensor:" + device);
     // Listen for custom events (e.g., 'message')
     socket.on("sensor:" + device, (parameterDto) => {
       console.log("Message from socket:" + device, parameterDto);
@@ -151,8 +156,8 @@ export default function NewChart({
   }
 
   const isOutOfSync = () => {
-    if (!data) return true;
-    const lastTimestamp = data[0]?.timestamp;
+    if (!chartData) return true;
+    const lastTimestamp = chartData.data.datasets[0].data[0].timestamp;
     if (lastTimestamp < new Date().getTime() - 300_000) {
       return true;
     } else {
@@ -160,7 +165,9 @@ export default function NewChart({
     }
   };
 
-  return (
+  return sensorSettings &&
+    sensorSettings[device] &&
+    sensorSettings[device].enabled ? (
     <div className="h-48 w-11/12 flex-col justify-center my-10">
       <h1
         className={`mt-4 mb-2 text-2xl flex justify-between pr-3 ${
@@ -193,5 +200,7 @@ export default function NewChart({
         <Bar options={chartData.options} data={chartData.data} />
       )}
     </div>
+  ) : (
+    ""
   );
 }

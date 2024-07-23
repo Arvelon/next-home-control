@@ -27,9 +27,9 @@ export default function Home({ data }) {
         localStorage.getItem("lightMode") === "true"
     );
 
-    setInterval(() => {
-      checkOutOfSync();
-    }, 30000);
+    // setInterval(() => {
+    //   checkOutOfSync();
+    // }, 30000);
   }, []);
 
   useEffect(() => {
@@ -167,7 +167,7 @@ export default function Home({ data }) {
 
       {/* HUMIDITY CHARTS */}
       <h1
-        className={`text-slate-300 mt-4 mb-4 text-3xl ${
+        className={`text-slate-300 mt-20 text-3xl ${
           lightMode ? "text-slate-700" : "text-slate-300"
         }`}
       >
