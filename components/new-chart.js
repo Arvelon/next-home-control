@@ -46,7 +46,10 @@ export default function NewChart({
   useEffect(() => {
     if (!data || !valueName) return;
 
-    if (localStorage.getItem("sensor-settings") !== "undefined") {
+    if (
+      localStorage.getItem("sensor-settings") !== "undefined" &&
+      localStorage.getItem("sensor-settings") !== "null"
+    ) {
       setSensorSettings(JSON.parse(localStorage.getItem("sensor-settings")));
     }
 
