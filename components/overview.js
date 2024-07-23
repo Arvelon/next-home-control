@@ -7,12 +7,17 @@ export default function Overview({ data, lightMode }) {
   const [sensorSettings, setSensorSettings] = useState(undefined);
 
   useEffect(() => {
+    console.log(sensorSettings);
     if (sensorSettings === undefined) return;
     localStorage.setItem("sensor-settings", JSON.stringify(sensorSettings));
   }, [sensorSettings]);
 
   useEffect(() => {
-    if (localStorage.getItem("sensor-settings") !== "undefined") {
+    console.log(localStorage.getItem("sensor-settings"));
+    if (
+      localStorage.getItem("sensor-settings") !== "undefined" &&
+      localStorage.getItem("sensor-settings") !== "null"
+    ) {
       setSensorSettings(JSON.parse(localStorage.getItem("sensor-settings")));
     } else {
       console.log("Sensor Settings nope");
