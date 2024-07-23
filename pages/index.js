@@ -76,7 +76,7 @@ export default function Home({ data }) {
       <Overview data={data} lightMode={lightMode} />
 
       <h1
-        className={`text-slate-300 mt-4 mb-4 text-3xl ${
+        className={`text-slate-300 mt-8 mb-4 text-3xl ${
           lightMode ? "text-slate-700" : "text-slate-300"
         }`}
       >
