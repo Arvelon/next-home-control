@@ -38,6 +38,7 @@ export default function NewChart({
   colorRgb = "51, 153, 255",
   unit,
   chartTypeBar = false,
+  globalSensorSettings,
 }) {
   const [chartData, setChartData] = useState(null);
   const [socketReady, setSocketReady] = useState(false);
@@ -130,6 +131,11 @@ export default function NewChart({
       socket.off("sensor:" + device);
     };
   }, [chartData]);
+
+  useEffect(() => {
+    console.log("g", globalSensorSettings);
+    setSensorSettings(globalSensorSettings);
+  }, [globalSensorSettings]);
 
   const pushParameter = (parameter) => {
     // if (!chartData) return;

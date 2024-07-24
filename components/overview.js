@@ -1,7 +1,7 @@
 import { sensors } from "@/config/runtimesettings";
 import { useEffect, useState } from "react";
 
-export default function Overview({ data, lightMode }) {
+export default function Overview({ data, lightMode, updateGlobalSettings }) {
   console.log("Overview");
 
   const [sensorSettings, setSensorSettings] = useState(undefined);
@@ -19,6 +19,7 @@ export default function Overview({ data, lightMode }) {
       localStorage.getItem("sensor-settings") !== "null"
     ) {
       setSensorSettings(JSON.parse(localStorage.getItem("sensor-settings")));
+      updateGlobalSettings(JSON.parse(localStorage.getItem("sensor-settings")));
     } else {
       console.log("Sensor Settings nope");
       let newSettings = {};
@@ -26,6 +27,7 @@ export default function Overview({ data, lightMode }) {
         (sensor) => (newSettings[sensor.namespace] = { enabled: true })
       );
       setSensorSettings(newSettings);
+      updateGlobalSettings(newSettings);
     }
   }, []);
 
@@ -35,6 +37,7 @@ export default function Overview({ data, lightMode }) {
 
     clone[device].enabled = !clone[device]?.enabled || false;
     setSensorSettings(clone);
+    updateGlobalSettings(clone);
     console.log(clone);
   };
 

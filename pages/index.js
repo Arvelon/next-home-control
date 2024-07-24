@@ -17,6 +17,7 @@ export default function Home({ data }) {
   const [chartTypeBar, setChartTypeBar] = useState(false);
   const [showOutOfSync, setShowOutOfSync] = useState(false);
   const [lightMode, setLightMode] = useState(false);
+  const [sensorSettings, setSensorSettings] = useState(false);
 
   const lastUpdated = new Date().getTime();
 
@@ -73,7 +74,11 @@ export default function Home({ data }) {
         </div>
       )}
 
-      <Overview data={data} lightMode={lightMode} />
+      <Overview
+        data={data}
+        lightMode={lightMode}
+        updateGlobalSettings={(settings) => setSensorSettings(settings)}
+      />
 
       <h1
         className={`text-slate-300 mt-8 mb-4 text-3xl ${
@@ -162,6 +167,7 @@ export default function Home({ data }) {
           colorRgb="255, 99, 132"
           chartTypeBar={chartTypeBar}
           lightMode={lightMode}
+          globalSensorSettings={sensorSettings}
         />
       ))}
 
@@ -185,6 +191,7 @@ export default function Home({ data }) {
           colorRgb="51, 153, 255"
           chartTypeBar={chartTypeBar}
           lightMode={lightMode}
+          globalSensorSettings={sensorSettings}
         />
       ))}
     </div>
