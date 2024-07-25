@@ -31,14 +31,51 @@ export default function Overview({ data, lightMode, updateGlobalSettings }) {
     }
   }, []);
 
-  const toggleChart = (device) => {
-    console.log(sensorSettings);
-    const clone = _.cloneDeep(sensorSettings);
+  // const pushParameter = (parameter) => {
+  //   // if (!chartData) return;
+  //   console.log(parameter);
+  //   console.log(chartData);
+  //   const clone = _.cloneDeep(chartData);
+  //   clone.data.labels.unshift(new Date(parameter.parameter.timestamp));
+  //   clone.data.datasets[0].data.unshift(
+  //     parseFloat(parameter.parameter[valueName])
+  //   );
+  //   console.log(clone);
+  //   setChartData(clone);
+  // };
 
+  const toggleChart = (device) => {
+    console.log(sensorSettings, device);
+    const clone = _.cloneDeep(sensorSettings);
+    console.log(clone, clone[device]);
     clone[device].enabled = !clone[device]?.enabled || false;
     setSensorSettings(clone);
     updateGlobalSettings(clone);
     console.log(clone);
+  };
+
+  const validateConstraints = (sensor) => {
+    if (!data) return false;
+    console.log(
+      "val",
+      sensor.label,
+      sensor.constraints,
+      data[sensor.namespace][0]?.temperature
+    );
+    const constraints = sensor.constraints;
+    const temperature = data[sensor.namespace][0]?.temperature;
+    const humidity = data[sensor.namespace][0]?.humidity;
+
+    const validations = [
+      temperature < constraints.temperature.max,
+      temperature > constraints.temperature.min,
+      humidity < constraints.humidity.max,
+      humidity > constraints.humidity.min,
+    ];
+
+    console.log("VALIDATIONS", validations);
+
+    return validations.every((entry) => entry);
   };
 
   return (
@@ -67,6 +104,9 @@ export default function Overview({ data, lightMode, updateGlobalSettings }) {
                     sensorSettings[sensor.namespace].enabled
                       ? ""
                       : "opacity-50"
+                  }
+                  ${
+                    validateConstraints(sensor) ? "" : "border-2 border-red-500"
                   }`}
                   onClick={() => toggleChart(sensor.namespace)}
                 >
