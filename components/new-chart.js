@@ -177,7 +177,7 @@ export default function NewChart({
   return sensorSettings &&
     sensorSettings[device] &&
     sensorSettings[device].enabled ? (
-    <div className="h-48 w-11/12 flex-col justify-center my-10">
+    <div className="h-48 w-11/12 flex-col justify-center my-5">
       <h1
         className={`mt-4 mb-2 text-lg flex justify-between pr-3 ${
           lightMode ? "text-slate-700" : "text-slate-300"
