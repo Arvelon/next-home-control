@@ -81,7 +81,7 @@ export default function Home({ data }) {
       />
 
       <h1
-        className={`text-slate-300 mt-8 mb-4 text-3xl ${
+        className={`text-slate-300 mt-8 mb-4 text-2xl ${
           lightMode ? "text-slate-700" : "text-slate-300"
         }`}
       >
@@ -173,7 +173,7 @@ export default function Home({ data }) {
 
       {/* HUMIDITY CHARTS */}
       <h1
-        className={`text-slate-300 mt-20 text-3xl ${
+        className={`text-slate-300 mt-20 text-2xl ${
           lightMode ? "text-slate-700" : "text-slate-300"
         }`}
       >
