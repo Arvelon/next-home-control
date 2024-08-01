@@ -55,9 +55,7 @@ export default function Home({ data }) {
   return (
     <div
       className={`pb-24 flex flex-col items-center ${
-        lightMode
-          ? "bg-slate-200 text-slate-950"
-          : "bg-slate-950 text-slate-300"
+        lightMode ? "bg-slate-200 text-slate-950" : "black-bg text-slate-300"
       }`}
     >
       <div className="absolute right-0 px-2 py-1">
